@@ -2,7 +2,8 @@ import { createAppContainer } from 'react-navigation'
 import { createStackNavigator } from 'react-navigation-stack'
 import ViewNotes from '../screens/ViewNotes'
 import AddNotes from '../screens/AddNotes'
-import myComponent from '../screens/myComponent'
+import Login from '../screens/Login'
+import Test from '../screens/test'
 
 /**
  * a mode property for the stack navigator. 
@@ -12,15 +13,21 @@ import myComponent from '../screens/myComponent'
 
 const StackNavigator = createStackNavigator(
   {
+    Login:{
+      screen: Login
+    },
     ViewNotes: {
       screen: ViewNotes
     },
     AddNotes: {
       screen: AddNotes
+    },
+    Test: {
+      screen: Test
     }
   },
   {
-    initialRouteName: 'ViewNotes',
+    initialRouteName: 'Login',
     headerMode: 'none',
     mode: 'modal'
   }

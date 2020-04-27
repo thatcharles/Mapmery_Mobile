@@ -10,28 +10,12 @@ import { color } from 'react-native-reanimated'
 
 function ViewNotes({ navigation }) {
 
-    // replace useState to enable link to Redux
+    // replace useState with useSelector to link to Redux
     const notes = useSelector(state => state)
     const dispatch = useDispatch()
 
     const addNote = note => dispatch(addnote(note))
     const deleteNote = id => dispatch(deletenote(id))
-
-
-    const posts = 
-      [
-        {
-          "id": 1,
-          "title": '123',
-          "description":  '123'
-        },
-        {
-          "id": 2,
-          "title": '456',
-          "description":  '456'
-        }
-      ]
-
     return (
         <>
             <Header titleText='Simple Note Taker' />

@@ -1,13 +1,11 @@
 // import the dependency
-import remove from 'lodash.remove'
+// import remove from 'lodash.remove'
 
 // Action Types
-
 export const ADD_NOTE = 'ADD_NOTE'
 export const DELETE_NOTE = 'DELETE_NOTE'
 
 // Action Creators
-
 let noteID = 0
 
 export function addnote(note) {
@@ -26,7 +24,6 @@ export function deletenote(id) {
 }
 
 // reducer
-
 const initialState = []
 
 function notesReducer(state = initialState, action) {
@@ -39,13 +36,6 @@ function notesReducer(state = initialState, action) {
           note: action.note
         }
       ]
-
-    case DELETE_NOTE:
-        console.log('delete')
-      const deletedNewArray = remove(state, obj => {
-        return obj.id != action.payload
-      })
-      return deletedNewArray
 
     default:
       return state
