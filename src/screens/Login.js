@@ -69,7 +69,7 @@ const runTiming = (clock, value, dest) => {
 
 const {width,height} = Dimensions.get('window')
 
-export default function Login() {
+export default function Login({ navigation }) {
 
   const [isReady, setIsReady] = useState(false)
 
@@ -258,7 +258,8 @@ export default function Login() {
               placeholderTextColor="black"
             />
             <Animated.View style={styles.button}>
-              <Text style={{fontSize:20, fontWeight:'bold'}}>SIGN IN</Text>
+              <Text style={{fontSize:20, fontWeight:'bold'}} onPress={() =>
+                navigation.navigate('ViewNotes')}>SIGN IN</Text>
             </Animated.View>
           </Animated.View>
         </View>
