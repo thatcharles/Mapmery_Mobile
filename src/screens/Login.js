@@ -259,7 +259,7 @@ export default function Login({ navigation }) {
             />
             <Animated.View style={styles.button}>
               <Text style={{fontSize:20, fontWeight:'bold'}} onPress={() =>
-                navigation.navigate('ViewNotes')}>SIGN IN</Text>
+                navigation.navigate('Home')}>SIGN IN</Text>
             </Animated.View>
           </Animated.View>
         </View>
