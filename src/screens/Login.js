@@ -121,6 +121,7 @@ export default function Login({ navigation }) {
       nativeEvent: ({ state }) =>
         block([
           cond(
+            // for gradually change the buttonOpacity according to the Clock
             eq(state, State.END),
             set(buttonOpacity, runTiming(new Clock(), 1, 0))
           )
