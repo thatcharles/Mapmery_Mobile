@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Text, View, SafeAreaView, Platform, StatusBar, ScrollView, Image, Dimensions } from 'react-native'
+import { Text, View, SafeAreaView, Platform, StatusBar, ScrollView, Image, Dimensions, StyleSheet } from 'react-native'
 import Header from '../components/Header'
 import { Ionicons } from '@expo/vector-icons'
 import Icon from 'react-native-vector-icons/Ionicons'
@@ -9,31 +9,18 @@ import Card_big from '../components/home/Card_big'
 import Card_2col from '../components/home/Card_2col'
 import Tag from '../components/home/Tag'
 import Animated from 'react-native-reanimated';
+import { FAB } from 'react-native-paper'
 
 const {
-    useCode,
     Value,
     event,
-    block,
-    cond,
-    eq,
-    set,
-    Clock,
-    startClock,
-    stopClock,
-    debug,
-    timing,
-    clockRunning,
     interpolate,
     Extrapolate,
-    and,
-    not,
-    concat
   } = Animated;
 
 const {width,height} = Dimensions.get('window')
 
-const Home = () => {
+const Home = ({ navigation }) => {
 
     const scrollY = new Value(0)
     let startHeaderHeight = 80
@@ -43,16 +30,6 @@ const Home = () => {
         startHeaderHeight = 110 + StatusBar.currentHeight
         endHeaderHeight = 80 + StatusBar.currentHeight
     }
-
-    const onScrollChange = event(
-        [
-            {
-                // when we scroll, put y offset into scrollY variable
-                nativeEvent:{contentOffset:{y:scrollY}}
-
-            }
-        ]
-    )
 
     const animatedHeaderHeight = interpolate(scrollY, {
         inputRange:[0,50],
@@ -83,7 +60,7 @@ const Home = () => {
                             placeholder='Try'
                             placeholderTextColor='grey'
                             underlineColorAndroid='transparent'
-                            style={{flex: 1, fontWeigth: '700', backgroundColor: 'white', height: 40}}
+                            style={{flex: 1, fontWeight: '700', backgroundColor: 'white', height: 40}}
                         />
                     </View>
                     <Animated.View 
@@ -136,12 +113,39 @@ const Home = () => {
                             <Card_2col imgUri={require('../../assets/img/rotterdam.jpg')} type={'vacation house'} name={'home 0'} price={'90$'} starRating={3.5}/>
                         </View>
                     </View>
-                    
                 </Animated.ScrollView>
+                <FAB
+                    style={styles.fab}
+                    size={10}
+                    color='#50a39b'
+                    icon='map'
+                    label='Map Mode'
+                    // add a second parameter object
+                    onPress={() =>
+                    navigation.navigate('HomeMap')
+                    }
+                ></FAB>
             </View>
         </SafeAreaView>
     )
 }
+
+const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: '#fff',
+      paddingHorizontal: 10,
+      paddingVertical: 20
+    },
+    fab: {
+      position: 'absolute',
+      backgroundColor: 'white',
+      margin: 10,
+      justifyContent: 'center',
+      alignSelf: 'center',
+      bottom: 0
+    }
+  })
 
 export default Home
 

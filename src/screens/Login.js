@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react'
-import { StyleSheet, View, Text, Dimensions, TouchableWithoutFeedback, TextInput } from 'react-native'
+import { StyleSheet, View, Text, Dimensions, TouchableWithoutFeedback, TextInput, TouchableOpacity } from 'react-native'
 import { Asset } from 'expo-asset';
 import { AppLoading } from 'expo';
 import Animated, { Easing } from 'react-native-reanimated';
@@ -258,10 +258,13 @@ export default function Login({ navigation }) {
               style={styles.textInput}
               placeholderTextColor="black"
             />
-            <Animated.View style={styles.button}>
-              <Text style={{fontSize:20, fontWeight:'bold'}} onPress={() =>
-                navigation.navigate('Home')}>SIGN IN</Text>
-            </Animated.View>
+            <TouchableOpacity onPress={() =>
+                navigation.navigate('Home')}
+            >
+              <Animated.View style={styles.button}>
+                  <Text style={{fontSize:20, fontWeight:'bold'}} >SIGN IN</Text>
+              </Animated.View>
+            </TouchableOpacity>
           </Animated.View>
         </View>
       </View>
@@ -309,7 +312,8 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     shadowOffset: {width: 2, height: 2},
     shadowColor: 'black',
-    shadowOpacity: 0.2
+    shadowOpacity: 0.2,
+    elevation: 2,
   },
   closeButton: {
     height: 40,
@@ -321,6 +325,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: -20,
     left: width / 2 - 20,
+    elevation: 2,
     shadowOffset: {width: 2, height: 2},
     shadowColor: 'black',
     shadowOpacity: 0.2

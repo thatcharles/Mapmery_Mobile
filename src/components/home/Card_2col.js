@@ -6,7 +6,7 @@ const {width,height} = Dimensions.get('window')
 
 const Card_2col = (props) => {
     return (
-        <View style={{width: width / 2 - 30, height: width / 2 - 30, borderWidth: 0.5, borderColor: '#dddddd'}}>
+        <View style={{width: width / 2 - 30, height: width / 2 - 30, borderWidth: 0.5, borderColor: '#dddddd', marginBottom: 10}}>
             <View style={{flex:1}}>
                 <Image source={props.imgUri}
                         style={{flex:1, width: null, height: null, resizeMode: 'cover'}}

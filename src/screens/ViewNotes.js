@@ -6,7 +6,7 @@ import Header from '../components/Header'
 
 import { useSelector, useDispatch } from 'react-redux'
 import { addnote, deletenote } from '../redux/notesApp'
-import { color } from 'react-native-reanimated'
+//import { color } from 'react-native-reanimated'
 
 function ViewNotes({ navigation }) {
 

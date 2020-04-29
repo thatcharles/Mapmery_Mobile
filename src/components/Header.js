@@ -16,7 +16,7 @@ function Header({ titleText }) {
 
 const styles = StyleSheet.create({
 headerContainer: {
-    backgroundColor: '#60DBC5'
+    backgroundColor: '#50a39b'//'#60DBC5'
 },
 container: {
     flex: 1,
@@ -24,7 +24,7 @@ container: {
     alignItems: 'center'
 },
 title: {
-    color: '#2E7166'
+    color: 'white'//'#2E7166'
 }
 })
 

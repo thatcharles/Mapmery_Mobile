@@ -8,6 +8,7 @@ import AddNotes from '../screens/AddNotes'
 import Login from '../screens/Login'
 import Test from '../screens/test'
 import Home from '../screens/Home'
+import HomeMap from '../screens/HomeMap'
 import Collection from '../screens/Collection'
 import Profile from '../screens/Profile'
 import TabBar from '../components/TabBar'
@@ -44,7 +45,7 @@ const HomeBottomTabNavigator = createBottomTabNavigator(
         navigationOptions: {
           tabBarIcon: ({ focused, tintColor }) => {
             const iconName = `md-home${focused ? '' : ''}`;
-            tintColor = focused ? '#FF0058' : 'white'
+            tintColor = focused ? '#50a39b' : 'white'
             return <Ionicons name={iconName} size={iconSize} color={tintColor} />;
           }
         }
@@ -54,7 +55,7 @@ const HomeBottomTabNavigator = createBottomTabNavigator(
         navigationOptions: {
           tabBarIcon: ({ focused, tintColor }) => {
             const iconName = `md-journal${focused ? '' : ''}`;
-            tintColor = focused ? '#FF0058' : 'white'
+            tintColor = focused ? '#50a39b' : 'white'
             return <Ionicons name={iconName} size={iconSize} color={tintColor} />;
           }
         }
@@ -64,7 +65,7 @@ const HomeBottomTabNavigator = createBottomTabNavigator(
         navigationOptions: {
           tabBarIcon: ({ focused, tintColor }) => {
             const iconName = `md-person${focused ? '' : ''}`;
-            tintColor = focused ? '#FF0058' : 'white'
+            tintColor = focused ? '#50a39b' : 'white'
             return <Ionicons name={iconName} size={iconSize} color={tintColor} />;
           }
         }
@@ -74,7 +75,7 @@ const HomeBottomTabNavigator = createBottomTabNavigator(
         navigationOptions: {
           tabBarIcon: ({ focused, tintColor }) => {
             const iconName = `md-business${focused ? '' : ''}`;
-            tintColor = focused ? '#FF0058' : 'white'
+            tintColor = focused ? '#50a39b' : 'white'
             return <Ionicons name={iconName} size={iconSize} color={tintColor} />;
           }
         }
@@ -99,9 +100,13 @@ const HomeBottomTabNavigator = createBottomTabNavigator(
 
 const HomeStackNavigator = createStackNavigator(
   { 
-      HomeBottomTabNavigator: HomeBottomTabNavigator
+      HomeBottomTabNavigator: HomeBottomTabNavigator,
+      HomeMap:{
+        screen: HomeMap
+      }
   },
   {
+      initialRouteName: 'HomeBottomTabNavigator',
       headerMode: 'none',
       mode: 'modal'
   }
