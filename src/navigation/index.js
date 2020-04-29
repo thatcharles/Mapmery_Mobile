@@ -12,6 +12,7 @@ import Collection from '../screens/Collection'
 import Profile from '../screens/Profile'
 import TabBar from '../components/TabBar'
 import { Ionicons} from '@expo/vector-icons'
+import Icon from 'react-native-vector-icons/Ionicons'
 
 /**
  * a mode property for the stack navigator. 
@@ -87,8 +88,9 @@ const HomeBottomTabNavigator = createBottomTabNavigator(
         style: {
           height: 55,
           backgroundColor: '#FF0058',
+          elevation: 5
         },
-        activeBackgroundColor: '#FFFFFF'
+        activeBackgroundColor: '#FFFFFF',
       },
       headerMode: 'none',
       mode: 'modal'
@@ -111,14 +113,6 @@ const SwitchNavigator = createStackNavigator(
     Login:{
       screen: Login
     },
-    /*
-    ViewNotes: {
-      screen: ViewNotes
-    },
-    AddNotes: {
-      screen: AddNotes
-    },
-    */
     Home: {screen: HomeStackNavigator},
     Test: {
       screen: Test

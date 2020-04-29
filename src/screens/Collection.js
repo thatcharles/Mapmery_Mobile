@@ -14,3 +14,4 @@ export default class Collection extends Component {
         )
     }
 }
+

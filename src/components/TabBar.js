@@ -12,7 +12,7 @@ const SpotLight = posed.View({
 });
 
 const S = StyleSheet.create({
-  container: { flexDirection: "row", height: 52, elevation: 2,  backgroundColor: "#FF0058"},
+  container: { flexDirection: "row", height: 52, elevation: 5,  backgroundColor: "#FF0058"},
   tabButton: { flex: 0.9, justifyContent: "center", alignItems: "center" },
   spotLight: {
     width: tabWidth,
@@ -21,10 +21,10 @@ const S = StyleSheet.create({
     alignItems: "center"
   },
   spotLightInner: {
-    width: 50,
-    height: 50,
+    width: 40,
+    height: 40,
     backgroundColor: "#ffffff",
-    borderRadius: 25
+    borderRadius: 20
     //borderBottomLeftRadius: 10,
     //borderBottomRightRadius: 10
   },
