@@ -1,15 +1,22 @@
-import React, {useState, useEffect} from 'react'
-import { View, Text, StyleSheet, Dimensions, Alert, SafeAreaView, ScrollView, TextInput} from 'react-native'
+import React, {useState, useEffect, useRef} from 'react'
+import { View, Text, StyleSheet, Dimensions, Alert, SafeAreaView, ScrollView, TextInput, Image, TouchableWithoutFeedback, TouchableOpacity} from 'react-native'
 import * as Permissions from 'expo-permissions';
+import Modal from 'react-native-modal';
+import Icon from 'react-native-vector-icons/Ionicons'
 
 import MapView, {Marker, Callout} from 'react-native-maps';
 import { locations } from "../locations";
+import { locations_1 } from "../locations_1";
 import Polyline from '@mapbox/polyline'
 
-import { FAB, List } from 'react-native-paper'
+import { FAB, List, Avatar, Card, IconButton, Button  } from 'react-native-paper'
 import HorizontalCard_small from '../components/home/HorizontalCard_small'
 import { set } from 'react-native-reanimated';
 import Carousel from 'react-native-snap-carousel'
+
+import HomeMap_actoin_card from '../components/HomeMap_action_card'
+import HomeMap_model from '../components/HomeMap_model'
+import HomeMapOptionWindow from '../components/HomeMapOptionWindow'
 
 const { width, height } = Dimensions.get('screen')
 
@@ -48,7 +55,10 @@ const HomeMap = ({navigation}) => {
     const [distance, setDistance] = useState(null)
     const [time, setTime] = useState(null)
     const [activeIndex, setActiveIndex] = useState(0)
-
+    const [isoptionArea, setIsoptionArea]  = useState(false)
+    const [isoptionWindow, setIsoptionWindow]  = useState(false)
+    const textInput = useRef(null);
+    //let textInput = null;
 
     const findCoordinates = async() => {
 		navigator.geolocation.getCurrentPosition(
@@ -65,13 +75,10 @@ const HomeMap = ({navigation}) => {
                     const destinations = location
                     
                     setDestination(destinations)
-                    //setDesLatitude(sampleLocation.coords.latitude)
-                    //setDesLongitude(sampleLocation.coords.longitude)
 
                     /**
                      * setDesLatitude might update the desLatitude, but we need useEffect to refresh the frontend.
                      * Since both props and state are assumed to be unchanging during 1 render.
-                     * 
                      * use useEffect to trigger mergeCoords()
                      */
                 }
@@ -111,40 +118,41 @@ const HomeMap = ({navigation}) => {
                 getDirections(concatStart, concatEnd)
             })
         }
-        // if (hasStartAndEnd) {
-        //     const concatStart = `${latitude},${longitude}`
-        //     const concatEnd = `${desLatitude[0]},${desLongitude[0]}`
-        //     getDirections(concatStart, concatEnd)
-        // }
       }
 
     const getDirections = async(startLoc, desLoc) => {
-        console.log('startPlanning:', startLoc, desLoc)
-    try {
-        /**
-         * ToDo: use waypoint.
-         */
-        const resp = await fetch(`https://maps.googleapis.com/maps/api/directions/json?origin=${startLoc}&destination=${desLoc}&mode=walking&key=AIzaSyD-9UDS1WHVVTiZjXjGxIUJZBGeaHTB7aI`)
-        const respJson = await resp.json();
-        const response = respJson.routes[0]
-        const distanceTime = response.legs[0]
-        const distance = distanceTime.distance.text
-        const time = distanceTime.duration.text
-        const points = Polyline.decode(respJson.routes[0].overview_polyline.points);
-        const newCoords = points.map(point => ({
-            latitude: point[0],
-            longitude: point[1]
-        }))
 
-        
-        setNavigateCoords(prevState => [...prevState, newCoords]);
-        
-        //setDistance(distance)
-        //setTime(time)
-    } catch(error) {
-        console.log('Error: ', error)
+        console.log('startPlanning:', startLoc, desLoc)
+        try {
+            /**
+             * ToDo: use waypoint?
+             */
+            const resp = await fetch(`https://maps.googleapis.com/maps/api/directions/json?origin=${startLoc}&destination=${desLoc}&mode=walking&key=AIzaSyD-9UDS1WHVVTiZjXjGxIUJZBGeaHTB7aI`)
+            const respJson = await resp.json();
+            const response = respJson.routes[0]
+            const distanceTime = response.legs[0]
+            const distance = distanceTime.distance.text
+            const time = distanceTime.duration.text
+            const points = Polyline.decode(respJson.routes[0].overview_polyline.points);
+            const newCoords = points.map(point => ({
+                latitude: point[0],
+                longitude: point[1]
+            }))
+
+            
+            setNavigateCoords(prevState => [...prevState, newCoords]);
+            //setDistance(distance)
+            //setTime(time)
+        } catch(error) {
+            console.log('Error: ', error)
+        }
     }
-    }
+
+    // const focusTextInput = () => {
+    //     // Focus the text input using the raw DOM API
+    //     console.log(textInput)
+    //     if (textInput) textInput.current.focus()
+    //   };
 
     const renderMarkers = () => {
         const locations  = location
@@ -159,17 +167,26 @@ const HomeMap = ({navigation}) => {
                   <Marker
                     key={idx+'Marker'}
                     coordinate={{ latitude, longitude }}
-                    // onPress={onMarkerPress(location)}
+                    //onPress={onMarkerPress(location)}
                     icon='home'
                   >
-                    <Callout>
-                        <View style={{padding: 10, backgroundColor: 'white', marginHorizontal: 20, elevation: 1, marginTop: Platform.OS === 'android'? 30 : null}}>
-                            <TextInput 
-                                placeholder='Try'
-                                placeholderTextColor='grey'
-                                underlineColorAndroid='transparent'
-                                style={{flex: 1, fontWeight: '700', backgroundColor: 'white', height: 40}}
-                            />
+                    <Callout
+                        tooltip
+                        onPress={() => {setIsoptionWindow(true)}}
+                    >
+                        <View style={{display: 'flex', height:60, marginLeft: 30}}>
+                            <View style={styles.bubble}>
+                                <View style={{flexDirection: 'row'}}>
+                                    <View style={{flex: 3, alignContent: 'center', justifyContent: 'center'}}>
+                                        <Text>
+                                            Midtown Marta station, Atlanta
+                                        </Text>
+                                    </View>
+                                    <View style={{flex: 1, alignContent: 'center', justifyContent: 'center'}}>
+                                    <IconButton icon="plus" onPress={() => {props.setIsoptionArea(true)}} color='#50a39b'/>
+                                    </View>
+                                </View>
+                            </View>
                         </View>
                     </Callout>
                   </Marker>
@@ -186,40 +203,22 @@ const HomeMap = ({navigation}) => {
         findCoordinates()
     }, [location])
 
-    let cards = [];
-    cards.push(
-        <View style={styles.slide}>
-            <View style={styles.cards}>
-            </View>
-        </View>
-    );    
-    cards.push(
-        <View style={styles.slide}>
-            <View style={styles.cards}>
-            </View>
-        </View>
-    );    
-    cards.push(
-        <View style={styles.slide}>
-            <View style={styles.cards}>
-            </View>
-        </View>
-    );    
-
     const _renderItem = ({item,index}) => {
         return (
-            <View style={{
-                backgroundColor:'white',
-                borderRadius: 5,
-                height: 130,
-                paddingHorizontal: 30,
-                marginHorizontal: 5}}
-            >
-              <Text style={{fontSize: 30}}>{item.title}</Text>
-              <Text>{item.text}</Text>
-            </View>
+                <HomeMap_actoin_card setIsoptionArea={setIsoptionArea}/>
           )
     }
+
+    useEffect(() => {
+        if (activeIndex === 0){
+            setNavigateCoords([])
+            setLocation(locations)
+        }
+        else if (activeIndex === 1){
+            setNavigateCoords([])
+            setLocation(locations_1)
+        }
+    }, [activeIndex])
 
     return (
         <SafeAreaView style={{flex: 1}}>
@@ -247,7 +246,6 @@ const HomeMap = ({navigation}) => {
                                         coordinates={polyline}
                                     />
                                 ))
-                                
                             }
                             </>
                         ):(<></>)}
@@ -262,6 +260,13 @@ const HomeMap = ({navigation}) => {
                         navigation.navigate('HomeBottomTabNavigator')
                     }
                 />
+                <View>
+                    <HomeMap_model setIsoptionArea={setIsoptionArea} isoptionArea={isoptionArea}/>
+                </View>
+                <View>
+                    <HomeMapOptionWindow imgUri={require('../../assets/img/rotterdam.jpg')} setIsoptionWindow={setIsoptionWindow} isoptionWindow={isoptionWindow} setIsoptionArea={setIsoptionArea}/>
+                </View>
+                
                 <View style={styles.buttonScroll}>
                     <Carousel
                         layout={"default"}
@@ -271,19 +276,7 @@ const HomeMap = ({navigation}) => {
                         itemWidth={250}
                         renderItem={_renderItem}
                         onSnapToItem = { index => setActiveIndex(index) } 
-                        
                     />
-                    {/*
-                    <ScrollView
-                        horizontal={true}
-                        decelerationRate={0}
-                        snapToInterval={width - 40}
-                        snapToAlignment={"center"}
-                        showsHorizontalScrollIndicator={false}
-                    >
-                        {cards}
-                    </ScrollView>
-                    */}
                 </View>
             </View>
         </SafeAreaView>
@@ -330,6 +323,17 @@ const styles = StyleSheet.create({
         shadowOffset: {width: 0,height: 8},
         borderRadius: 15
     },
+    bubble: {
+        backgroundColor: 'white',
+        padding: 10,
+        borderRadius: 5,
+        width: width * 0.5,
+        height: 50,
+        display: `flex`,
+        alignItems: 'center',
+        justifyContent: 'center',
+        margin: 0
+    }
 })
 
 export default HomeMap

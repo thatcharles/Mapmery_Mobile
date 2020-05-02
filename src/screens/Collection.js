@@ -9,7 +9,7 @@ import Card_big from '../components/home/Card_big'
 import Card_2col from '../components/home/Card_2col'
 import Tab from '../components/Tab'
 import GridPost from '../components/GridPost'
-import { FAB, List } from 'react-native-paper'
+import { FAB, List, Portal, Provider } from 'react-native-paper'
 
 import { posts } from "../posts";
 
@@ -26,6 +26,7 @@ const Collection = () => {
 
     const [selectedTab, setSelectedTab] = useState(0)
     const [loadedPosts, setLoadedPosts] = useState(posts)
+    const [open, setOpen] = useState(null)
 
     const scrollY2 = new Value(0)
     let startHeaderHeight = 80
@@ -76,6 +77,10 @@ const Collection = () => {
     useEffect(() => {
         ref.current.animateNextTransition();
     }, [])
+
+    const _onStateChange = ( {open} ) => {
+        setOpen(open);
+    }
 
     return (
         <SafeAreaView style={{flex: 1}}>
@@ -156,6 +161,22 @@ const Collection = () => {
                         onPress={() => randomizePosts(loadedPosts)}
                     />
                 ):(<></>)}
+                                <FAB.Group
+                                    open={open}
+                                    icon={open ? 'close' : 'plus'}
+                                    color={open ? 'white' : '#50a39b'}
+                                    actions={[
+                                        { icon: 'alpha-m', label: 'Mapnory Trip', onPress: () => console.log('Pressed Trip')},
+                                        { icon: 'flag-variant-outline', label: 'Spot', onPress: () => console.log('Pressed Spot') },
+                                    ]}
+                                    onStateChange={_onStateChange}
+                                    onPress={() => {}}
+                                    fabStyle={{
+                                        backgroundColor: open ? '#ff3d43' : 'white',
+                                        borderColor: '#50a39b',
+                                        borderWidth: open ? 0 : 1
+                                    }}
+                                />
             </Transitioning.View>
         </SafeAreaView>
     )
@@ -178,16 +199,16 @@ const styles = StyleSheet.create({
         overflow: 'hidden'
     },
     imageContainer: {
-      flex: 1,
-      flexDirection: "row",
-      flexWrap: "wrap",
-      justifyContent: "space-around"
+        flex: 1,
+        flexDirection: "row",
+        flexWrap: "wrap",
+        justifyContent: "space-around"
     },
     fab: {
-      position: 'absolute',
-      margin: 20,
-      right: 0,
-      bottom: 10
+        position: 'absolute',
+        margin: 20,
+        right: 0,
+        bottom: 10
     }
 })
 
