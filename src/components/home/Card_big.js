@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Text, View, SafeAreaView, Platform, StatusBar, ScrollView, Image, Dimensions } from 'react-native'
 const {width,height} = Dimensions.get('window')
 
-const Car_big = (props) => {
+const Car_big = (props, {navigation}) => {
     return (
         <View style={{width: width-40, height: 200, marginTop: 40, borderWidth: 0.5, borderRadius: 5, borderColor: '#dddddd'}}>
             <View style={{flex:2}}>

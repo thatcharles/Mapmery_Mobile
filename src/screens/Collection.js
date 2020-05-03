@@ -22,7 +22,7 @@ const {
 
 const {width,height} = Dimensions.get('window')
 
-const Collection = () => {
+const Collection = ({navigation}) => {
 
     const [selectedTab, setSelectedTab] = useState(0)
     const [loadedPosts, setLoadedPosts] = useState(posts)
@@ -136,7 +136,9 @@ const Collection = () => {
                 >
                     {selectedTab === 0 ?(
                         <View style={{marginTop: 40, paddingHorizontal: 20}}>
-                            <Card_big imgUri={require('../../assets/img/rotterdam.jpg')} name={'Journey 2'}/>
+                            <TouchableOpacity onPress={() => navigation.navigate('CollectionMap')}>
+                                <Card_big imgUri={require('../../assets/img/rotterdam.jpg')} name={'Journey 2'}/>
+                            </TouchableOpacity>
                             <Card_big imgUri={require('../../assets/img/rotterdam.jpg')} name={'Journey example'}/>
                             <Card_big imgUri={require('../../assets/img/rotterdam.jpg')} name={'Journey nice'}/>
                             <Card_big imgUri={require('../../assets/img/rotterdam.jpg')} name={'Journey LA'}/>

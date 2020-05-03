@@ -9,6 +9,7 @@ import Login from '../screens/Login'
 import Test from '../screens/test'
 import Home from '../screens/Home'
 import HomeMap from '../screens/HomeMap'
+import CollectionMap from '../screens/CollectionMap'
 import Collection from '../screens/Collection'
 import Profile from '../screens/Profile'
 import TabBar from '../components/TabBar'
@@ -103,6 +104,9 @@ const HomeStackNavigator = createStackNavigator(
       HomeBottomTabNavigator: HomeBottomTabNavigator,
       HomeMap:{
         screen: HomeMap
+      },
+      CollectionMap:{
+        screen: CollectionMap
       }
   },
   {
