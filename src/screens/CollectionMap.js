@@ -12,7 +12,7 @@ import Polyline from '@mapbox/polyline'
 
 import { FAB, List, Avatar, Card, IconButton, Button, Image  } from 'react-native-paper'
 import HorizontalCard_small from '../components/home/HorizontalCard_small'
-import { set } from 'react-native-reanimated';
+import Animated, { set } from 'react-native-reanimated';
 import Carousel from 'react-native-snap-carousel'
 
 import HomeMap_actoin_card from '../components/HomeMap_action_card'
@@ -21,6 +21,7 @@ import HomeMapOptionWindow from '../components/HomeMapOptionWindow'
 import Info_model from '../components/Info_model'
 import DraggableFlatListComponent from '../components/DraggableFlatListComponent'
 import GooglePlacesInput from '../components/GooglePlacesInput'
+import AnimatedSheet from '../components/AnimatedSheet'
 
 
 const { width, height } = Dimensions.get('screen')
@@ -44,6 +45,8 @@ const CollectionMap = ({navigation}) => {
     //const [data, setData] = useState(exampleData)
     const textInput = useRef(null);
 
+    let translateY = new Animated.Value(0)
+
     const findCoordinates = async() => {
 		navigator.geolocation.getCurrentPosition(
 			position => {
@@ -57,7 +60,6 @@ const CollectionMap = ({navigation}) => {
                 if (location){
                     const destinations = location
                     setDestination(destinations)
-
                     /**
                      * setDesLatitude might update the desLatitude, but we need useEffect to refresh the frontend.
                      * Since both props and state are assumed to be unchanging during 1 render.
@@ -371,6 +373,10 @@ const CollectionMap = ({navigation}) => {
                     <DraggableFlatListComponent location={location} setLocation={setLocation} setActiveIndex={setActiveIndex}/>
                 </View>
                 ) : (<></>)}
+                {location ? (
+                    <AnimatedSheet translateY={translateY}></AnimatedSheet>
+                ) : (<></>)}
+
                 
             </View>
         </SafeAreaView>
