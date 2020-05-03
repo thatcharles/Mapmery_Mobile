@@ -10,6 +10,7 @@ import Test from '../screens/test'
 import Home from '../screens/Home'
 import HomeMap from '../screens/HomeMap'
 import CollectionMap from '../screens/CollectionMap'
+import GooglePlacesInput from '../components/GooglePlacesInput'
 import Collection from '../screens/Collection'
 import Profile from '../screens/Profile'
 import TabBar from '../components/TabBar'
@@ -107,6 +108,9 @@ const HomeStackNavigator = createStackNavigator(
       },
       CollectionMap:{
         screen: CollectionMap
+      },
+      GooglePlacesInput: {
+        screen: GooglePlacesInput
       }
   },
   {

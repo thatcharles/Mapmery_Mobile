@@ -18,11 +18,14 @@ import Carousel from 'react-native-snap-carousel'
 import HomeMap_actoin_card from '../components/HomeMap_action_card'
 import HomeMap_model from '../components/HomeMap_model'
 import HomeMapOptionWindow from '../components/HomeMapOptionWindow'
+import Info_model from '../components/Info_model'
 import DraggableFlatListComponent from '../components/DraggableFlatListComponent'
+import GooglePlacesInput from '../components/GooglePlacesInput'
+
 
 const { width, height } = Dimensions.get('screen')
 
-const HomeMap = ({navigation}) => {
+const CollectionMap = ({navigation}) => {
     const [latitude, setLatitude] = useState(null)
     const [longitude, setLongitude] = useState(null)
     const [isMapready, setIsMapready] = useState(false)
@@ -36,6 +39,8 @@ const HomeMap = ({navigation}) => {
     const [activeIndex, setActiveIndex] = useState(0)
     const [isoptionArea, setIsoptionArea]  = useState(false)
     const [isoptionWindow, setIsoptionWindow]  = useState(false)
+    const [searchResults, setSearchResults] = useState(null)
+    const [isInfoModel, setIsInfoModel] = useState(false)
     //const [data, setData] = useState(exampleData)
     const textInput = useRef(null);
 
@@ -173,14 +178,14 @@ const HomeMap = ({navigation}) => {
     /**
      * Insert blue marker to the trip
      */
-    const insertLocation = () => {
+    const insertLocation = (latitude, longitude) => {
         console.log(location)
         const newLocation = {
                 name: "New Location",
                 address: "330 happy street",
                 coords: {
-                latitude: 33.778502, 
-                longitude: -84.391776
+                latitude: latitude, 
+                longitude: longitude
                 },
                 image_url: "https://media.glassdoor.com/l/de/cd/ae/b6/the-face-shop.jpg"
             }
@@ -208,7 +213,7 @@ const HomeMap = ({navigation}) => {
                     <Callout
                         tooltip
                         onPress={() => {
-                            insertLocation()
+                            insertLocation(latitude, longitude)
                         }}
                     >
                         <View style={{display: 'flex', height:60, marginLeft: 30}}>
@@ -242,7 +247,50 @@ const HomeMap = ({navigation}) => {
         findCoordinates()
     }, [location])
 
-
+    const renderMarker = () => {
+        let lat = 0.0
+        let lng = 0.0
+        if (searchResults){
+            lat = searchResults.details.geometry.location.lat
+            lng = searchResults.details.geometry.location.lng
+            return (
+                <View>
+                  <Marker
+                      key={'newlySearchedMarker'}
+                      coordinate={{
+                          latitude: lat, longitude: lng
+                          }}
+                      pinColor='orange'
+                  >
+                      <Callout
+                          tooltip
+                          onPress={() => {
+                              insertLocation(lat, lng)
+                              setSearchResults(null)
+                          }}
+                      >
+                          <View style={{display: 'flex', height:60, marginLeft: 30}}>
+                              <View style={styles.bubble}>
+                                  <View style={{flexDirection: 'row'}}>
+                                      <View style={{flex: 3, alignContent: 'center', justifyContent: 'center'}}>
+                                          <Text>
+                                              New Marker
+                                          </Text>
+                                      </View>
+                                      <View style={{flex: 1, alignContent: 'center', justifyContent: 'center'}}>
+                                      <IconButton icon="plus" onPress={() => {props.setIsoptionArea(true)}} color='#50a39b'/>
+                                      </View>
+                                  </View>
+                              </View>
+                          </View>
+                      </Callout>
+                  </Marker>
+                </View>
+              )
+        }
+        
+        return (<></>)
+    }
 
     return (
         <SafeAreaView style={{flex: 1}}>
@@ -262,6 +310,7 @@ const HomeMap = ({navigation}) => {
                             <>
                             {renderMarkers()}
                             {renderUnorderedMarkers()}
+                            {renderMarker()}
                             {
                                 navigateCoords.map((polyline, idx) =>(
                                     <MapView.Polyline
@@ -285,11 +334,37 @@ const HomeMap = ({navigation}) => {
                         navigation.navigate('HomeBottomTabNavigator')
                     }
                 />
+                <FAB
+                    style={styles.fab_right}
+                    color='#50a39b'
+                    small
+                    icon='information-outline'
+                    onPress={() => {setIsInfoModel(true)}}
+                />
+                <View style={styles.search}>
+                    <Icon
+                        name='ios-search' 
+                        size={25} 
+                        style={{marginHorizontal: 15, marginTop: 7, color: '#50a39b'}}
+                    />
+                    <TextInput 
+                        placeholder='search'
+                        placeholderTextColor='grey'
+                        underlineColorAndroid='transparent'
+                        style={{flex: 1, fontWeight: '700', backgroundColor: 'white', height: 40}}
+                        onFocus={() =>  navigation.navigate('GooglePlacesInput', {
+                            setSearchResults
+                        })}
+                    />
+                </View>
                 <View>
                     <HomeMap_model setIsoptionArea={setIsoptionArea} isoptionArea={isoptionArea}/>
                 </View>
                 <View>
                     <HomeMapOptionWindow imgUri={require('../../assets/img/rotterdam.jpg')} setIsoptionWindow={setIsoptionWindow} isoptionWindow={isoptionWindow} setIsoptionArea={setIsoptionArea}/>
+                </View>
+                <View>
+                    <Info_model isInfoModel={isInfoModel} setIsInfoModel={setIsInfoModel}/>
                 </View>
                 {location ? (
                 <View style={styles.buttonScroll}>
@@ -358,7 +433,29 @@ const styles = StyleSheet.create({
         height: 8,
         borderRadius: 4,
         backgroundColor: "rgba(130,4,150, 0.9)"
+    },
+    fab_right: {
+        position: 'absolute',
+        marginHorizontal: 30,
+        marginVertical: 50,
+        right: 0,
+        backgroundColor: 'white',
+        top: 0
+    },
+    search: {
+        position: 'absolute',
+        flexDirection: 'row', 
+        alignSelf: 'center', 
+        width: width / 2,
+        height: 40, 
+        marginHorizontal: 30,
+        marginVertical: 50,
+        backgroundColor: 'white', 
+        borderRadius: 20, 
+        top: 0,
+        elevation: 5,
+        overflow: 'hidden'
     }
 })
 
-export default HomeMap
+export default CollectionMap
