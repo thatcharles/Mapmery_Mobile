@@ -4,6 +4,8 @@ import StarRating from 'react-native-star-rating'
 import { FAB, List, Avatar, Card, IconButton  } from 'react-native-paper'
 import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/Ionicons'
+import Animated, { set } from 'react-native-reanimated';
+import { TapGestureHandler, State } from 'react-native-gesture-handler';
 
 const {width,height} = Dimensions.get('window')
 
@@ -36,12 +38,14 @@ const Collection_card = (props) => {
                                 icon="content-save-edit-outline" 
                                 size={25} 
                                 onPress={() => {
-                                    console.log('pressed store')
-                                }} color='#50a39b'
+                                    props.setEditModel(true)
+                                }} 
+                                color='#50a39b'
                             />
                         </View>
                     </View>
                 </View>
+
             </View>
     )
 }

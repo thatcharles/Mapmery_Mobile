@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useRef} from 'react'
-import { View, Text, StyleSheet, Dimensions, Alert, SafeAreaView, ScrollView, TextInput, TouchableWithoutFeedback, TouchableOpacity} from 'react-native'
+import { View, Text, StyleSheet, Dimensions, Alert, SafeAreaView, TextInput, TouchableWithoutFeedback, TouchableOpacity} from 'react-native'
 import * as Permissions from 'expo-permissions';
 import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/Ionicons'
@@ -12,7 +12,8 @@ import Polyline from '@mapbox/polyline'
 
 import { FAB, List, Avatar, Card, IconButton, Button, Image  } from 'react-native-paper'
 import HorizontalCard_small from '../components/home/HorizontalCard_small'
-import Animated, { set } from 'react-native-reanimated';
+import Animated, { set, useCode, cond, eq } from 'react-native-reanimated';
+import { ScrollView, State, TapGestureHandler } from 'react-native-gesture-handler';
 import Carousel from 'react-native-snap-carousel'
 
 import HomeMap_actoin_card from '../components/HomeMap_action_card'
@@ -42,10 +43,10 @@ const CollectionMap = ({navigation}) => {
     const [isoptionWindow, setIsoptionWindow]  = useState(false)
     const [searchResults, setSearchResults] = useState(null)
     const [isInfoModel, setIsInfoModel] = useState(false)
-    //const [data, setData] = useState(exampleData)
     const textInput = useRef(null);
-
-    let translateY = new Animated.Value(0)
+    const [editModel, setEditModel] = useState(false)
+    let translateY = new Animated.Value(300)
+    
 
     const findCoordinates = async() => {
 		navigator.geolocation.getCurrentPosition(
@@ -343,6 +344,15 @@ const CollectionMap = ({navigation}) => {
                     icon='information-outline'
                     onPress={() => {setIsInfoModel(true)}}
                 />
+                <FAB
+                    style={styles.fab_editor}
+                    color='#50a39b'
+                    icon='file-document-outline'
+                    onPress={() => 
+                        navigation.navigate('Editor')
+                    }
+                />
+                
                 <View style={styles.search}>
                     <Icon
                         name='ios-search' 
@@ -370,11 +380,21 @@ const CollectionMap = ({navigation}) => {
                 </View>
                 {location ? (
                 <View style={styles.buttonScroll}>
-                    <DraggableFlatListComponent location={location} setLocation={setLocation} setActiveIndex={setActiveIndex}/>
+                    <DraggableFlatListComponent 
+                        location={location} 
+                        setLocation={setLocation} 
+                        setActiveIndex={setActiveIndex} 
+                        setEditModel={setEditModel}
+                    />
                 </View>
                 ) : (<></>)}
                 {location ? (
-                    <AnimatedSheet translateY={translateY}></AnimatedSheet>
+                    <AnimatedSheet 
+                        imgUri={require('../../assets/img/rotterdam.jpg')}
+                        setEditModel={setEditModel}
+                        editModel={editModel}
+                        translateY={translateY}
+                    ></AnimatedSheet>
                 ) : (<></>)}
 
                 
@@ -461,6 +481,14 @@ const styles = StyleSheet.create({
         top: 0,
         elevation: 5,
         overflow: 'hidden'
+    },
+    fab_editor: {
+        position: 'absolute',
+        marginHorizontal: 10,
+        marginVertical: 50,
+        right: 0,
+        backgroundColor: 'white',
+        bottom: 170
     }
 })
 

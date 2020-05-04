@@ -2,6 +2,9 @@ import React, { Component } from "react";
 import { View, Text, StyleSheet, Dimensions, Alert, SafeAreaView, ScrollView, TextInput, TouchableWithoutFeedback, TouchableOpacity} from 'react-native'
 import DraggableFlatList from "react-native-draggable-flatlist";
 import Collection_card from './Collection_card'
+import Animated, { set } from 'react-native-reanimated';
+import { TapGestureHandler, State } from 'react-native-gesture-handler';
+import Icon from 'react-native-vector-icons/Ionicons'
 
 // name has to be the same
 import { locations } from "../locations";
@@ -28,6 +31,7 @@ class DraggableFlatListComponent extends Component {
       { data: this.props.location },
       () => console.log('data:', this.state)
     )
+    console.log('DraggableFlatListComponent: ', this.props.gestureHandler)
   }
 
   componentDidUpdate(prevProps) {
@@ -53,7 +57,7 @@ class DraggableFlatListComponent extends Component {
         }}
         onLongPress={drag}
       >
-        <Collection_card imgUri={require('../../assets/img/rotterdam.jpg')} style={{elevation: 10}}/>
+        <Collection_card imgUri={require('../../assets/img/rotterdam.jpg')} style={{elevation: 10}} setEditModel={this.props.setEditModel}/>
       </TouchableOpacity>
     );
   };
