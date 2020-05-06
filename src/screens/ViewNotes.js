@@ -5,13 +5,14 @@ import { Text, FAB, List } from 'react-native-paper'
 import Header from '../components/Header'
 
 import { useSelector, useDispatch } from 'react-redux'
-import { addnote, deletenote } from '../redux/notesApp'
+import { addnote, deletenote } from '../redux/notesApp' 
 //import { color } from 'react-native-reanimated'
 
 function ViewNotes({ navigation }) {
 
     // replace useState with useSelector to link to Redux
-    const notes = useSelector(state => state)
+    const notes = useSelector(state => state.notesReducer)
+    // console.log(notes)
     const dispatch = useDispatch()
 
     const addNote = note => dispatch(addnote(note))

@@ -1,27 +1,19 @@
-import React from 'react'
-import { View, Text, SafeAreaView, TextInput, ActivityIndicator, StatusBar } from 'react-native'
+import React, {useState} from 'react'
+import { Dimensions, View, Text, SafeAreaView, TextInput, ActivityIndicator, StatusBar, ScrollView } from 'react-native'
 import {Formik} from 'formik'
 import * as Yup from "yup";
 import { FAB, List, Avatar, Card, IconButton, Button, Image  } from 'react-native-paper'
 import axios from 'axios'
+//import { registerUser } from "../../../_actions/user_actions";
+import { useSelector, useDispatch } from 'react-redux'
+import { registerUser } from '../redux/notesApp'
 
-const registerUser = async(dataToSubmit) => {
-    const request = axios.post('https://mapmory.herokuapp.com/api/users/register',dataToSubmit)
-        .then(response => console.log(response.data))
-        .catch(function (error) {
-            console.log(error);
-          });
-
-    // fetch('https://mapmory.herokuapp.com/api/blog/getBlogs', {method:'GET'})
-    // .then(
-    //   result => {
-    //     return result.json()
-    //   }).then(data => {
-    //     console.log(data)
-    //   })
-}
+const {width,height} = Dimensions.get('window')
 
 const Signup = ({navigation}) => {
+
+    const dispatch = useDispatch();
+    const [errormsg, setErrormsg] = useState(null)
 
     let startHeaderHeight = 50
 
@@ -64,19 +56,16 @@ const Signup = ({navigation}) => {
                         lastname: values.lastName,
                         image: 'http://gravatar.com/avatar/d=identicon'
                       };
-
-                      //console.log(dataToSubmit)
                       
                       // ec2-3-88-10-24.compute-1.amazonaws.com/api/users/register
                       // https://mapmory.herokuapp.com/api/users/register
-                      registerUser(dataToSubmit)
-                    //   .then(response => {
-                    //     if (response.payload.success) {
-                    //       navigation.navigate("Login");
-                    //     } else {
-                    //       alert(response.payload.err.errmsg)
-                    //     }
-                    //   })
+                        dispatch(registerUser(dataToSubmit)).then(response => {
+                            if (response.payload.success) {
+                                navigation.navigate("Login");
+                            } else {
+                                setErrormsg(response.payload.err.errmsg)
+                            }
+                          })
             
                       setSubmitting(false);
                     }, 500);
@@ -111,8 +100,8 @@ const Signup = ({navigation}) => {
                                     >Cancel</Button>
                                 </View>
                             </View>
-                            <View style={{flex: 2, backgroundColor: 'white'}}>
-                                <View style={{flex: 1, backgroundColor: 'white', maxHeight: 80}}>
+                            <ScrollView style={{flex: 1, backgroundColor: 'white'}}>
+                                <View style={{flex: 1, backgroundColor: 'white', maxHeight: 70}}>
                                     <TextInput 
                                         value = {values.email}
                                         placeholder='Email'
@@ -128,7 +117,7 @@ const Signup = ({navigation}) => {
                                         onChangeText={handleChange('email')}
                                     />
                                 </View>
-                                <View style={{flex: 1, backgroundColor: 'white', maxHeight: 80}}>
+                                <View style={{flex: 1, backgroundColor: 'white', maxHeight: 70}}>
                                     <TextInput 
                                         value = {values.name}
                                         placeholder='First Name'
@@ -144,7 +133,7 @@ const Signup = ({navigation}) => {
                                         onChangeText={handleChange('name')}
                                     />
                                 </View>
-                                <View style={{flex: 1, backgroundColor: 'white', maxHeight: 80}}>
+                                <View style={{flex: 1, backgroundColor: 'white', maxHeight: 70}}>
                                     <TextInput 
                                         value = {values.lastName}
                                         placeholder='Last Name'
@@ -160,7 +149,7 @@ const Signup = ({navigation}) => {
                                         onChangeText={handleChange('lastName')}
                                     />
                                 </View>
-                                <View style={{flex: 1, backgroundColor: 'white', maxHeight: 80}}>
+                                <View style={{flex: 1, backgroundColor: 'white', maxHeight: 70}}>
                                     <TextInput 
                                         value = {values.password}
                                         placeholder='Password'
@@ -176,7 +165,7 @@ const Signup = ({navigation}) => {
                                         onChangeText={handleChange('password')}
                                     />
                                 </View>
-                                <View style={{flex: 1, backgroundColor: 'white', maxHeight: 80}}>
+                                <View style={{flex: 1, backgroundColor: 'white', maxHeight: 70}}>
                                     <TextInput 
                                         value = {values.confirmPassword}
                                         placeholder='Confirm Password'
@@ -192,8 +181,11 @@ const Signup = ({navigation}) => {
                                         onChangeText={handleChange('confirmPassword')}
                                     />
                                 </View>
+                            </ScrollView>
+                            <View style={{justifyContent: 'center', height: 30}}>
+                                {errormsg ? (<Text>{errormsg}</Text>): (<></>)}
                             </View>
-                            <View style={{flex:1, justifyContent: 'center'}}>
+                            <View style={{justifyContent: 'center', height: 50}}>
                                 {isSubmitting? (<ActivityIndicator/>): (<Button onPress={handleSubmit}>Submit</Button>)}
                             </View>
                         </React.Fragment>

@@ -6,9 +6,8 @@ import Animated, { Easing } from 'react-native-reanimated';
 import { TapGestureHandler, State } from 'react-native-gesture-handler';
 import Svg, {Image, Circle, ClipPath} from 'react-native-svg';
 
-/**
- * Backend: ec2-3-88-10-24.compute-1.amazonaws.com/api/users/register
- */
+import { loginUser } from '../redux/notesApp'
+import { useDispatch } from "react-redux";
 
 const {
   useCode,
@@ -76,6 +75,11 @@ const {width,height} = Dimensions.get('window')
 export default function Login({ navigation }) {
 
   const [isReady, setIsReady] = useState(false)
+  const [formErrorMessage, setFormErrorMessage] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+
+  const dispatch = useDispatch();
 
   // load image into cache before loading the page
   const _loadAssetsAsync = async() => {
@@ -86,7 +90,7 @@ export default function Login({ navigation }) {
   }
 
   /**
-   *  Method 1. Utilize useEffect and useCode to change buttonOpacity with animation. Need to maintain multiple variables. Less clean.
+   *  Animated Method 1. Utilize useEffect and useCode to change buttonOpacity with animation. Need to maintain multiple variables. Less clean.
    * */ 
   /*
   const {clock, isShow, buttonOpacity} = useMemo(
@@ -186,6 +190,32 @@ export default function Login({ navigation }) {
     extrapolate: Extrapolate.CLAMP
   });
 
+  const onSigninPressed = () => {
+    //console.log(email, password)
+    setTimeout(() => {
+      let dataToSubmit = {
+        email: email,
+        password: password
+      };
+
+      dispatch(loginUser(dataToSubmit))
+        .then(response => {
+          if (response.payload.loginSuccess) {
+            // window.localStorage.setItem('userId', response.payload.userId);
+            navigation.navigate('Home')
+          } else {
+            setFormErrorMessage('Check out your Account or Password again')
+          }
+        })
+        .catch(err => {
+          setFormErrorMessage('Check out your Account or Password again')
+          setTimeout(() => {
+            setFormErrorMessage('')
+          }, 1000);
+        });
+    }, 500);
+  }
+
   return (
     <>
     {isReady == true ? (
@@ -256,23 +286,25 @@ export default function Login({ navigation }) {
                 </Animated.Text>
               </Animated.View>
             </TapGestureHandler>
+            <Text style={{fontSize: 8, alignSelf: 'flex-end', marginEnd: 30}}>{formErrorMessage}</Text>
             <TextInput 
               placeholder="EMAIL"
               style={styles.textInput}
               placeholderTextColor="black"
+              onChangeText={(value) => setEmail(value)}
             />
             <TextInput 
               placeholder="PASSWORD"
               style={styles.textInput}
               placeholderTextColor="black"
+              onChangeText={(value) => setPassword(value)}
             />
-            <TouchableOpacity onPress={() =>
-                navigation.navigate('Home')}
-            >
-              <Animated.View style={styles.button}>
-                  <Text style={{fontSize:20, fontWeight:'bold'}} >SIGN IN</Text>
-              </Animated.View>
-            </TouchableOpacity>
+              <TouchableOpacity onPress={() => onSigninPressed()}
+              >
+                <Animated.View style={styles.button}>
+                    <Text style={{fontSize:20, fontWeight:'bold'}} >SIGN IN</Text>
+                </Animated.View>
+              </TouchableOpacity>
           </Animated.View>
         </View>
       </View>

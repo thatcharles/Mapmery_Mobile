@@ -5,11 +5,8 @@ import Animated, {Transition, Transitioning} from 'react-native-reanimated';
 import Icon from 'react-native-vector-icons/Ionicons'
 import { TextInput, Appbar, Avatar } from 'react-native-paper'
 import HorizontalCard_small from '../components/home/HorizontalCard_small'
-import Card_big from '../components/home/Card_big'
-import Card_2col from '../components/home/Card_2col'
-import Tab from '../components/Tab'
-import GridPost from '../components/GridPost'
-import { FAB, List } from 'react-native-paper'
+
+import { useSelector, useDispatch } from 'react-redux'
 
 const {width,height} = Dimensions.get('window')
 
@@ -23,6 +20,7 @@ const Profile = () => {
     const InfoHeight = 80
     const InsightHeight = 130
 
+    const Id = useSelector(state => state.userReducer.loginSucces.userId)
 
     return (
         <SafeAreaView style={{flex: 1}}>
@@ -60,6 +58,11 @@ const Profile = () => {
                                 </Text>
                                 <Text style={{fontSize: 12 ,fontWeight: '500'}}>
                                     May 2020
+                                </Text>
+                            </View>
+                            <View style={{ flexDirection:'row', paddingHorizontal: 10, backgroundColor: 'white'}}>
+                                <Text style={{fontSize: 10 ,fontWeight: '500', marginHorizontal: 10}}>
+                                    {Id}
                                 </Text>
                             </View>
                         </View>
