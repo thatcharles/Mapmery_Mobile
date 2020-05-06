@@ -7,7 +7,8 @@ import { TapGestureHandler, State } from 'react-native-gesture-handler';
 import Svg, {Image, Circle, ClipPath} from 'react-native-svg';
 
 import { loginUser } from '../redux/notesApp'
-import { useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+//import Auth from "../hoc/Auth";
 
 const {
   useCode,
@@ -80,6 +81,10 @@ export default function Login({ navigation }) {
   const [password, setPassword] = useState('')
 
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    navigation.navigate('Auth')
+  }, [])
 
   // load image into cache before loading the page
   const _loadAssetsAsync = async() => {
@@ -262,7 +267,9 @@ export default function Login({ navigation }) {
               <Text style={{ fontSize: 20, fontWeight: 'bold' }}>SIGN IN</Text>
             </Animated.View>
           </TapGestureHandler>
-          <TouchableOpacity onPress={()=>{navigation.navigate('SignUp')}}>
+          <TouchableOpacity onPress={()=>{
+            navigation.navigate('SignUp')}}
+          >
             <Animated.View style={{...styles.button, 
                                     opacity: buttonOpacity,
                                     transform: [{ translateY: buttonY }]}}

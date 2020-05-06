@@ -5,12 +5,15 @@ import Animated, {Transition, Transitioning} from 'react-native-reanimated';
 import Icon from 'react-native-vector-icons/Ionicons'
 import { TextInput, Appbar, Avatar } from 'react-native-paper'
 import HorizontalCard_small from '../components/home/HorizontalCard_small'
+import { logoutUser } from '../redux/notesApp'
 
 import { useSelector, useDispatch } from 'react-redux'
+import navigation from '../navigation';
+import axios from 'axios';
 
 const {width,height} = Dimensions.get('window')
 
-const Profile = () => {
+const Profile = ({navigation}) => {
 
     let startHeaderHeight = 80
     if (Platform.OS === 'android') {
@@ -20,7 +23,37 @@ const Profile = () => {
     const InfoHeight = 80
     const InsightHeight = 130
 
-    const Id = useSelector(state => state.userReducer.loginSucces.userId)
+    const dispatch = useDispatch();
+    const userReducer = useSelector(state => state.userReducer)
+    const userId = userReducer.loginSucces ?  userReducer.loginSucces.userId : null
+    const userData = userReducer.userData ?  userReducer.userData : null
+    const ID = userId ? userId: userData._id
+
+    const logoutHandler = () => {
+        setTimeout(() => {
+            dispatch(logoutUser())
+                .then(response => {
+                    console.log(response)
+                    setTimeout(() => {
+                        // used for redirect
+                        navigation.navigate('Login')
+                        }, 1000);
+                });
+          }, 500);
+          /*
+        axios.get('https://mapmory.herokuapp.com/api/users/logout').then(response => {
+            if (response.status === 200) {
+              setTimeout(() => {
+                // used for redirect
+                  navigation.navigate('Login')
+                }, 1000);
+              
+            } else {
+              alert('Log Out Failed')
+            }
+          });
+          */
+    }
 
     return (
         <SafeAreaView style={{flex: 1}}>
@@ -32,7 +65,7 @@ const Profile = () => {
                             <Text
                                 style={{ flex: 1, fontSize: 28 ,fontWeight: '700', backgroundColor: 'white', marginTop: 10}}
                             >
-                                Yu-Lin Chung
+                                Yu-Lin Chung {userData.name} {userData.lastname}
                             </Text>
                             <Text
                                 style={{flex: 1, fontSize: 12 ,fontWeight: '500', backgroundColor: 'white'}}
@@ -62,7 +95,7 @@ const Profile = () => {
                             </View>
                             <View style={{ flexDirection:'row', paddingHorizontal: 10, backgroundColor: 'white'}}>
                                 <Text style={{fontSize: 10 ,fontWeight: '500', marginHorizontal: 10}}>
-                                    {Id}
+                                    {ID}
                                 </Text>
                             </View>
                         </View>
@@ -141,6 +174,11 @@ const Profile = () => {
                                 About
                             </Text>
                     </View>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => {logoutHandler()}}>
+                    <Text style={{flex: 1, fontSize: 20 ,fontWeight: '500', color: '#4240eb', marginVertical: 15, marginHorizontal: 20, paddingHorizontal: 10, paddingVertical: 5}}>
+                                Logout
+                    </Text>
                 </TouchableOpacity>
             </ScrollView>
         </SafeAreaView>

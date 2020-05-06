@@ -12,6 +12,7 @@ import HomeMap from '../screens/HomeMap'
 import CollectionMap from '../screens/CollectionMap'
 import Editor from '../screens/Editor'
 import SignUp from '../screens/Signup'
+import Auth from "../hoc/Auth";
 import GooglePlacesInput from '../components/GooglePlacesInput'
 import Collection from '../screens/Collection'
 import Profile from '../screens/Profile'
@@ -119,7 +120,8 @@ const HomeStackNavigator = createStackNavigator(
       },
       SignUp: {
         screen: SignUp
-      }
+      },
+      Auth: {screen: Auth},
   },
   {
       initialRouteName: 'HomeBottomTabNavigator',
@@ -128,7 +130,9 @@ const HomeStackNavigator = createStackNavigator(
   }
 )
 
-// Use createSwitchNavigator when ready
+/* Use createSwitchNavigator when ready
+ * Need to deal with Login page keep calliny Auth
+*/
 const SwitchNavigator = createStackNavigator(
   {
     Login:{

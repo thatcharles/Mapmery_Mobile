@@ -9,6 +9,7 @@ function AddNotes({ navigation }) {
     const [noteValue, setNoteValue] = useState('')
 
     function onSaveNote() {
+        console.log(navigation.state)
         navigation.state.params.addNote({ noteTitle, noteValue })
         navigation.goBack()
     }

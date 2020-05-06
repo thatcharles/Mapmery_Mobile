@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Text, View, SafeAreaView, Platform, StatusBar, ScrollView, Image, Dimensions, StyleSheet } from 'react-native'
 import Header from '../components/Header'
 import { Ionicons } from '@expo/vector-icons'
@@ -8,7 +8,7 @@ import HorizontalCard_small from '../components/home/HorizontalCard_small'
 import Card_big from '../components/home/Card_big'
 import Card_2col from '../components/home/Card_2col'
 import Tag from '../components/home/Tag'
-import Animated from 'react-native-reanimated';
+import Animated, { set } from 'react-native-reanimated';
 import { FAB } from 'react-native-paper'
 
 const {
@@ -21,6 +21,8 @@ const {
 const {width,height} = Dimensions.get('window')
 
 const Home = ({ navigation }) => {
+
+    const [isAuth, setIsAuth] = useState(false)
 
     const scrollY = new Value(0)
     let startHeaderHeight = 80
@@ -48,6 +50,20 @@ const Home = ({ navigation }) => {
         outputRange: [-30, 10],
         extrapolate: Extrapolate.CLAMP
     })
+
+    // const setAuth = tf => {
+    //     setIsAuth(tf)
+    // }
+
+    // useEffect(() => {
+    //     console.log(isAuth)
+    //     if (!isAuth){
+    //         console.log('Home call auth')
+    //         navigation.navigate('Auth', {
+    //             setAuth
+    //         })
+    //     }
+    // }, [])
 
 
     return (
