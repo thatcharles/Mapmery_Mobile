@@ -11,6 +11,7 @@ import Home from '../screens/Home'
 import HomeMap from '../screens/HomeMap'
 import CollectionMap from '../screens/CollectionMap'
 import Editor from '../screens/Editor'
+import SignUp from '../screens/Signup'
 import GooglePlacesInput from '../components/GooglePlacesInput'
 import Collection from '../screens/Collection'
 import Profile from '../screens/Profile'
@@ -115,6 +116,9 @@ const HomeStackNavigator = createStackNavigator(
       },
       Editor: {
         screen: Editor
+      },
+      SignUp: {
+        screen: SignUp
       }
   },
   {

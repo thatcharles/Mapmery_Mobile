@@ -1,10 +1,14 @@
 import React, { useState, useMemo, useEffect } from 'react'
-import { StyleSheet, View, Text, Dimensions, TouchableWithoutFeedback, TextInput, TouchableOpacity } from 'react-native'
+import { StyleSheet, View, Text, Dimensions, TouchableWithoutFeedback, TextInput, Button, TouchableOpacity } from 'react-native'
 import { Asset } from 'expo-asset';
 import { AppLoading } from 'expo';
 import Animated, { Easing } from 'react-native-reanimated';
 import { TapGestureHandler, State } from 'react-native-gesture-handler';
 import Svg, {Image, Circle, ClipPath} from 'react-native-svg';
+
+/**
+ * Backend: ec2-3-88-10-24.compute-1.amazonaws.com/api/users/register
+ */
 
 const {
   useCode,
@@ -93,9 +97,10 @@ export default function Login({ navigation }) {
     }),
     [],
   );
-
   const [clock, setClock] = useState(new Clock())
   const [isShow, setIsShow] = useState(new Value(1))
+  const [show, setShow] = useState(true)
+  
 
   useEffect(() => {
     isShow.setValue(show ? 1 : 0);
@@ -109,37 +114,38 @@ export default function Login({ navigation }) {
     ]),
     [isShow]
   );
+
   */
-   
+
   const [buttonOpacity, setButtonOpacity] = useState(new Value(1))
 
   /**
    * Method 2. Use Gesture Handler to change buttonOpacity with animation. Less variables. Clean and easy to read.
    */
   const onStateChange = event([
-    {
-      nativeEvent: ({ state }) =>
-        block([
-          cond(
-            // for gradually change the buttonOpacity according to the Clock
-            eq(state, State.END),
-            set(buttonOpacity, runTiming(new Clock(), 1, 0))
-          )
-        ])
-    }
-  ]);
+      {
+        nativeEvent: ({ state }) =>
+          block([
+            cond(
+              // for gradually change the buttonOpacity according to the Clock
+              eq(state, State.END),
+              set(buttonOpacity, runTiming(new Clock(), 1, 0)),
+            )
+          ])
+      }
+    ]);
 
   const onCloseState = event([
-    {
-      nativeEvent: ({ state }) =>
-        block([
-          cond(
-            eq(state, State.END),
-            set(buttonOpacity, runTiming(new Clock(), 0, 1))
-          )
-        ])
-    }
-  ]);
+      {
+        nativeEvent: ({ state }) =>
+          block([
+            cond(
+              eq(state, State.END),
+              set(buttonOpacity, runTiming(new Clock(), 0, 1))
+            )
+          ])
+      }
+    ]);
   
   /**
    * inputRange would take buttonOpacity in and outputRange is the corresponding output value
@@ -206,6 +212,7 @@ export default function Login({ navigation }) {
         <View style={styles.bottomArea}>
           {/** Legacy for method 1.
            * 
+           
           <TouchableWithoutFeedback onPress={() => {
             setShow(!show)
           }}>
@@ -213,7 +220,7 @@ export default function Login({ navigation }) {
                                   opacity: buttonOpacity,
                                   transform: [{ translateY: buttonY }]}}
             >
-              <Text style={{ fontSize: 20, fontWeight: 'bold' }}>SIGN IN</Text>
+              <Text style={{ fontSize: 20, fontWeight: 'bold' }}>SIGN UP</Text>
             </Animated.View>
           </TouchableWithoutFeedback>
           */}
@@ -225,13 +232,14 @@ export default function Login({ navigation }) {
               <Text style={{ fontSize: 20, fontWeight: 'bold' }}>SIGN IN</Text>
             </Animated.View>
           </TapGestureHandler>
-          <Animated.View style={{...styles.button, 
-                                backgroundColor: '#2E71DC',
-                                opacity: buttonOpacity,
-                                transform: [{ translateY: buttonY }]}}
-          >
-            <Text style={{ fontSize: 20, fontWeight: 'bold', color:'white' }}>SIGN IN WITH FACEBOOK</Text>
-          </Animated.View>
+          <TouchableOpacity onPress={()=>{navigation.navigate('SignUp')}}>
+            <Animated.View style={{...styles.button, 
+                                    opacity: buttonOpacity,
+                                    transform: [{ translateY: buttonY }]}}
+              >
+                <Text style={{ fontSize: 20, fontWeight: 'bold' }}>SIGN UP</Text>
+            </Animated.View>
+          </TouchableOpacity>
           <Animated.View style={{zIndex: textInputZIndex,
                                 opacity: textInputOpacity,
                                 transform: [{translateY: textInputY}],
