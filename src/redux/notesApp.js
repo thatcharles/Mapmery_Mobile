@@ -11,6 +11,18 @@ export const REGISTER_USER = 'register_user';
 export const AUTH_USER = 'auth_user';
 export const LOGOUT_USER = 'logout_user';
 
+/**
+ * For local development
+ * Use LAN to connect device
+ */
+import Constants from "expo-constants";
+const { manifest } = Constants;
+
+const api = (typeof manifest.packagerOpts === `object`) && manifest.packagerOpts.dev
+  ? manifest.debuggerHost.split(`:`).shift().concat(`:5000`)
+  : `api.example.com`;
+/***********************/
+
 // Action Creators
 let noteID = 0
 
@@ -44,6 +56,9 @@ export function loginUser(dataToSubmit){
   const request = axios.post('https://mapmory.herokuapp.com/api/users/login',dataToSubmit)
               .then(response => response.data);
 
+  // const request = axios.post(`http://${api}/api/users/login`, dataToSubmit)
+  //   .then(response => response.data);
+
   return {
       type: LOGIN_USER,
       payload: request
@@ -53,6 +68,8 @@ export function loginUser(dataToSubmit){
 export function auth(){
   const request = axios.get('https://mapmory.herokuapp.com/api/users/auth')
   .then(response => response.data);
+  // const request = axios.get(`http://${api}/api/users/auth`)
+  // .then(response => response.data);
 
   return {
       type: AUTH_USER,
