@@ -4,14 +4,12 @@ import {Formik} from 'formik'
 import * as Yup from "yup";
 import { FAB, List, Avatar, Card, IconButton, Button, Image  } from 'react-native-paper'
 import axios from 'axios'
-//import { registerUser } from "../../../_actions/user_actions";
 import { useSelector, useDispatch } from 'react-redux'
-import { registerUser } from '../redux/notesApp'
-import moment from "moment"
+import { updateUser } from '../redux/notesApp'
 
 const {width,height} = Dimensions.get('window')
 
-const Signup = ({navigation}) => {
+const EditProfile = ({navigation}) => {
 
     const dispatch = useDispatch();
     const [errormsg, setErrormsg] = useState(null)
@@ -26,50 +24,32 @@ const Signup = ({navigation}) => {
         <SafeAreaView style={{ flex: 1 }}>
             <Formik
                 initialValues={{
-                    email: '',
-                    lastName: '',
-                    name: '',
-                    password: '',
-                    confirmPassword: ''
+                    lastName: navigation.state.params.lastname,
+                    name: navigation.state.params.name,
+                    description: navigation.state.params.description,
+                    location: navigation.state.params.location
                   }}
                 validationSchema={Yup.object().shape({
-                    email: Yup.string()
-                      .email('Email is invalid')
-                      .required('Email is required'),
-                    name: Yup.string()
-                      .required('Name is required'),
-                    lastName: Yup.string()
-                      .required('Last Name is required'),
-                    password: Yup.string()
-                      .min(6, 'Password must be at least 6 characters')
-                      .required('Password is required'),
-                    confirmPassword: Yup.string()
-                      .oneOf([Yup.ref('password'), null], 'Passwords must match')
-                      .required('Confirm Password is required')
+                    name: Yup.string(),
+                    lastName: Yup.string(),
+                    description: Yup.string()
+                    .max(150, 'at most 150 caracters'),
+                    location: Yup.string()
+                    .max(50, 'at most 50 caracters'),
                 })}
                 onSubmit={(values, { setSubmitting }) => {
                     setTimeout(() => {
             
-                      let dataToSubmit = {
-                        email: values.email,
-                        password: values.password,
-                        name: values.name,
-                        lastname: values.lastName,
-                        image: `http://gravatar.com/avatar/${moment().unix()}?d=identicon`
-                      };
-                      
-                      // ec2-3-88-10-24.compute-1.amazonaws.com/api/users/register
-                      // https://mapmory.herokuapp.com/api/users/register
-                        dispatch(registerUser(dataToSubmit)).then(response => {
-                            if (response.payload.success) {
-                                navigation.navigate("Login");
-                            } else {
-                                setErrormsg(response.payload.err.errmsg)
-                            }
-                          })
-            
-                      setSubmitting(false);
-                    }, 500);
+                        let dataToSubmit = {
+                            name: values.name,
+                            lastname: values.lastName,
+                            description: values.description,
+                            location: values.location
+                        };
+                        
+                        navigation.state.params.updateHandler(dataToSubmit)
+                        navigation.navigate("Profile");
+                      }, 500);
                   }}
             >
                 {formikProps => {
@@ -97,27 +77,11 @@ const Signup = ({navigation}) => {
                                         color='red' 
                                         size={40} 
                                         style={{marginTop: 5}}
-                                        onPress={() => navigation.navigate('Login')}
+                                        onPress={() => navigation.navigate("Profile")}
                                     >Cancel</Button>
                                 </View>
                             </View>
                             <ScrollView style={{flex: 1, backgroundColor: 'white'}}>
-                                <View style={{flex: 1, backgroundColor: 'white', maxHeight: 70}}>
-                                    <TextInput 
-                                        value = {values.email}
-                                        placeholder='Email'
-                                        placeholderTextColor='grey'
-                                        underlineColorAndroid= {errors.email && touched.email ? 'red' : '#dddddd'}
-                                        style={{
-                                            fontWeight: '700', 
-                                            backgroundColor: 'white', 
-                                            height: 60,
-                                            borderRadius: 1,
-                                            margin: 10
-                                        }}
-                                        onChangeText={handleChange('email')}
-                                    />
-                                </View>
                                 <View style={{flex: 1, backgroundColor: 'white', maxHeight: 70}}>
                                     <TextInput 
                                         value = {values.name}
@@ -152,8 +116,8 @@ const Signup = ({navigation}) => {
                                 </View>
                                 <View style={{flex: 1, backgroundColor: 'white', maxHeight: 70}}>
                                     <TextInput 
-                                        value = {values.password}
-                                        placeholder='Password'
+                                        value = {values.description}
+                                        placeholder='Description'
                                         placeholderTextColor='grey'
                                         underlineColorAndroid= {errors.password && touched.password ? 'red' : '#dddddd'}
                                         style={{
@@ -163,15 +127,15 @@ const Signup = ({navigation}) => {
                                             borderRadius: 1,
                                             margin: 10
                                         }}
-                                        onChangeText={handleChange('password')}
+                                        onChangeText={handleChange('description')}
                                     />
                                 </View>
                                 <View style={{flex: 1, backgroundColor: 'white', maxHeight: 70}}>
                                     <TextInput 
-                                        value = {values.confirmPassword}
-                                        placeholder='Confirm Password'
+                                        value = {values.location}
+                                        placeholder='Location'
                                         placeholderTextColor='grey'
-                                        underlineColorAndroid= {errors.confirmPassword && touched.confirmPassword ? 'red' : '#dddddd'}
+                                        underlineColorAndroid= {errors.password && touched.password ? 'red' : '#dddddd'}
                                         style={{
                                             fontWeight: '700', 
                                             backgroundColor: 'white', 
@@ -179,7 +143,7 @@ const Signup = ({navigation}) => {
                                             borderRadius: 1,
                                             margin: 10
                                         }}
-                                        onChangeText={handleChange('confirmPassword')}
+                                        onChangeText={handleChange('location')}
                                     />
                                 </View>
                             </ScrollView>
@@ -197,4 +161,4 @@ const Signup = ({navigation}) => {
     )
 }
 
-export default Signup
+export default EditProfile

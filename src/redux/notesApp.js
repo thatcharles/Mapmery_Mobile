@@ -10,6 +10,7 @@ export const LOGIN_USER = 'login_user';
 export const REGISTER_USER = 'register_user';
 export const AUTH_USER = 'auth_user';
 export const LOGOUT_USER = 'logout_user';
+export const UPDATE_USER = 'update_user';
 
 /**
  * For local development
@@ -87,6 +88,20 @@ export function logoutUser(){
   }
 }
 
+/** Update user */
+export async function updateUser(dataToSubmit){
+  const request = await axios.post('https://mapmory.herokuapp.com/api/users/update', dataToSubmit)
+    .then(response => response.data);
+  // const request = await axios.post(`http://${api}/api/users/update`, dataToSubmit)
+  //     .then(response => response.data);
+
+  
+  return {
+      type: UPDATE_USER,
+      payload: request
+  }
+}
+
 // reducer
 import { combineReducers } from 'redux';
 const initialState = []
@@ -116,11 +131,13 @@ const userReducer = ( state = {}, action ) =>
           // console.log('REGISTER_USER: register:', action.payload)
           return {...state, register: action.payload }
       case LOGIN_USER:
-          return { ...state, loginSucces: action.payload }
+          return { ...state, loginSucces: action.payload, userData: {} }
       case AUTH_USER:
           return {...state, userData: action.payload }
       case LOGOUT_USER:
           return {...state}
+      case UPDATE_USER:
+        return {...state, userData: action.payload}
       default:
           return state;
   }

@@ -10,6 +10,7 @@ import Card_2col from '../components/home/Card_2col'
 import Tag from '../components/home/Tag'
 import Animated, { set } from 'react-native-reanimated';
 import { FAB } from 'react-native-paper'
+import { useSelector, useDispatch } from 'react-redux'
 
 const {
     Value,
@@ -51,19 +52,25 @@ const Home = ({ navigation }) => {
         extrapolate: Extrapolate.CLAMP
     })
 
-    // const setAuth = tf => {
-    //     setIsAuth(tf)
-    // }
+    const dispatch = useDispatch();
+    const userReducer = useSelector(state => state.userReducer)
+    const userId = userReducer.loginSucces ?  userReducer.loginSucces.userId : null
+    const userData = userReducer.userData ?  userReducer.userData : null
 
-    // useEffect(() => {
-    //     console.log(isAuth)
-    //     if (!isAuth){
-    //         console.log('Home call auth')
-    //         navigation.navigate('Auth', {
-    //             setAuth
-    //         })
-    //     }
-    // }, [])
+    const isEmpty = (obj) => {
+        for(var key in obj) {
+            if(obj.hasOwnProperty(key))
+                return false;
+        }
+        return true;
+    }
+    
+    useEffect(() => {
+        if(isEmpty(userReducer.userData)){
+            console.log('user login')
+            navigation.navigate('Auth')
+        }
+    }, [])
 
 
     return (

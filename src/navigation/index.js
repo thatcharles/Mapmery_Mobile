@@ -12,6 +12,7 @@ import HomeMap from '../screens/HomeMap'
 import CollectionMap from '../screens/CollectionMap'
 import Editor from '../screens/Editor'
 import SignUp from '../screens/Signup'
+import EditProfile from '../screens/EditProfile'
 import Auth from "../hoc/Auth";
 import GooglePlacesInput from '../components/GooglePlacesInput'
 import Collection from '../screens/Collection'
@@ -122,6 +123,7 @@ const HomeStackNavigator = createStackNavigator(
         screen: SignUp
       },
       Auth: {screen: Auth},
+      EditProfile: {screen: EditProfile}
   },
   {
       initialRouteName: 'HomeBottomTabNavigator',

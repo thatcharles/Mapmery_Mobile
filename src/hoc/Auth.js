@@ -4,6 +4,39 @@ import React, { useEffect } from 'react';
 import { auth } from '../redux/notesApp'
 import { useSelector, useDispatch } from "react-redux";
 import { StyleSheet, View, Text, Dimensions, TouchableWithoutFeedback, TextInput, Button, TouchableOpacity } from 'react-native'
+
+export default function Auth({ navigation }, props) {
+
+    let user = useSelector(state => state.userReducer.user);
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+
+        dispatch(auth()).then(response => {
+            console.log('Auth response: ', response)
+            if (!response.payload.isAuth) {
+                navigation.navigate('Login')
+            } else {
+                if (!response.payload.isAdmin) {
+                    if (navigation.state.params){
+                        navigation.state.params.setAuth(true)
+                    }
+                    navigation.navigate('Home')
+                }
+                else {
+                    if (navigation.state.params){
+                        navigation.state.params.setAuth(true)
+                    }
+                    navigation.navigate('Home')
+                }
+            }
+        })
+        
+    }, [navigation.state.params])
+
+    return (<Text>loading...</Text>)
+}
+
 /*
 export default function (ComposedClass, reload, adminRoute = null) {
     function AuthenticationCheck(props) {
@@ -42,36 +75,4 @@ export default function (ComposedClass, reload, adminRoute = null) {
     return AuthenticationCheck
 }
 */
-
-export default function Auth({ navigation }, props) {
-
-    let user = useSelector(state => state.userReducer.user);
-    const dispatch = useDispatch();
-
-    useEffect(() => {
-
-        dispatch(auth()).then(response => {
-            console.log('Auth response: ', response)
-            if (!response.payload.isAuth) {
-                navigation.navigate('Login')
-            } else {
-                if (!response.payload.isAdmin) {
-                    if (navigation.state.params){
-                        navigation.state.params.setAuth(true)
-                    }
-                    navigation.navigate('Home')
-                }
-                else {
-                    if (navigation.state.params){
-                        navigation.state.params.setAuth(true)
-                    }
-                    navigation.navigate('Home')
-                }
-            }
-        })
-        
-    }, [navigation.state.params])
-
-    return (<Text>loading...</Text>)
-}
 
