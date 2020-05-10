@@ -168,7 +168,7 @@ const Collection = ({navigation}) => {
                                     icon={open ? 'close' : 'plus'}
                                     color={open ? 'white' : '#50a39b'}
                                     actions={[
-                                        { icon: 'alpha-m', label: 'Mapnory Trip', onPress: () => console.log('Pressed Trip')},
+                                        { icon: 'alpha-m', label: 'Mapnory Trip', onPress: () => navigation.navigate('CollectionMap')},
                                         { icon: 'flag-variant-outline', label: 'Spot', onPress: () => console.log('Pressed Spot') },
                                     ]}
                                     onStateChange={_onStateChange}

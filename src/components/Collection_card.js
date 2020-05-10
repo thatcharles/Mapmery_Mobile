@@ -14,7 +14,7 @@ const Collection_card = (props) => {
             <View style={{...styles.optioncard}}>
                 <View style={{ paddingHorizontal: 10, marginHorizontal: 10, backgroundColor: 'white', height: 50}}>
                         <Text numberOfLines={1} style={{flex: 1, fontSize: 20 ,fontWeight: '500'}}>
-                            Midtown Marta station, Atlanta
+                            {props.name}
                         </Text>
                 </View>
                 <View style={{ flexDirection: 'row', paddingHorizontal: 10, marginHorizontal: 10, backgroundColor: 'white', marginTop: -25}}>
@@ -30,12 +30,13 @@ const Collection_card = (props) => {
                     </View>
                     <View style={{flex: 2, marginTop: 20}}>
                         <Text style={{fontSize: 12 ,fontWeight: '500', marginHorizontal: 10, paddingHorizontal: 10, height: 50}}>
-                            Collection card
+                            {props.body}
                         </Text>
                         <View style={{flexDirection: 'row', alignSelf:'flex-end'}}>
                             <IconButton icon="keyboard-backspace" size={25} onPress={() => {console.log('pressed back')}} color='#ff3d43'/>
                             <IconButton 
-                                icon="content-save-edit-outline" 
+                                //icon="content-save-edit-outline" 
+                                icon='note-plus'
                                 size={25} 
                                 onPress={() => {
                                     props.setEditModel(true)

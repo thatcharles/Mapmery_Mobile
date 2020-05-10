@@ -11,6 +11,9 @@ export const REGISTER_USER = 'register_user';
 export const AUTH_USER = 'auth_user';
 export const LOGOUT_USER = 'logout_user';
 export const UPDATE_USER = 'update_user';
+// Post Types
+export const CREATE_POST = 'create_post'
+export const CREATE_PLACE = 'create_place'
 
 /**
  * For local development
@@ -24,7 +27,7 @@ const api = (typeof manifest.packagerOpts === `object`) && manifest.packagerOpts
   : `api.example.com`;
 /***********************/
 
-// Action Creators
+/*********** Action Creators ************/
 let noteID = 0
 
 export function addnote(note) {
@@ -42,7 +45,8 @@ export function deletenote(id) {
   }
 }
 
-// User Action Creators
+/*********** User Action Creators ************/
+
 export function registerUser(dataToSubmit){
   const request = axios.post('https://mapmory.herokuapp.com/api/users/register',dataToSubmit)
       .then(response => response.data);
@@ -88,7 +92,6 @@ export function logoutUser(){
   }
 }
 
-/** Update user */
 export async function updateUser(dataToSubmit){
   const request = await axios.post('https://mapmory.herokuapp.com/api/users/update', dataToSubmit)
     .then(response => response.data);
@@ -101,6 +104,32 @@ export async function updateUser(dataToSubmit){
       payload: request
   }
 }
+
+/*********** Post Action Creators ************/
+
+export function createPost(dataToSubmit){
+  const request = axios.post('https://mapmory.herokuapp.com/api/post/createPost',dataToSubmit)
+      .then(response => response.data);
+  // const request = axios.post(`http://${api}/api/post/createPost`, dataToSubmit)
+  // .then(response => response.data);
+  
+  return {
+      type: CREATE_POST,
+      payload: request
+  }
+}
+
+export function createPlace(dataToSubmit){
+  const request = axios.post('https://mapmory.herokuapp.com/api/place/createPlace',dataToSubmit)
+      .then(response => response.data);
+  // const request = axios.post(`http://${api}/api/place/createPlace`, dataToSubmit)
+  // .then(response => response.data);
+  
+  return {
+      type: CREATE_PLACE,
+      payload: request
+  }
+} 
 
 // reducer
 import { combineReducers } from 'redux';
@@ -143,10 +172,23 @@ const userReducer = ( state = {}, action ) =>
   }
 }
 
+const postReducer = ( state = {}, action ) => 
+{
+  switch(action.type){
+      case CREATE_POST:
+          return {...state, postInfo: action.payload }
+      case CREATE_PLACE:
+        return {...state, placeInfo: action.payload } 
+      default:
+          return state;
+  }
+}
+
 
 export default combineReducers({
   notesReducer,
-  userReducer
+  userReducer,
+  postReducer
 });
 
 //export default rootReducer;

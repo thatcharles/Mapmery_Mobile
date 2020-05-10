@@ -1,9 +1,11 @@
-import React, {useState, useEffect, useRef} from 'react'
+import React, {useState, useEffect, useRef, useMemo} from 'react'
 import { View, Text, StyleSheet, Dimensions, Alert, SafeAreaView, TextInput, TouchableWithoutFeedback, TouchableOpacity} from 'react-native'
 import * as Permissions from 'expo-permissions';
 import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/Ionicons'
 import DraggableFlatList from "react-native-draggable-flatlist";
+import { useSelector, useDispatch } from 'react-redux'
+import { createPost, createPlace } from '../redux/notesApp'
 
 import MapView, {Marker, Callout} from 'react-native-maps';
 import { locations } from "../locations";
@@ -15,6 +17,7 @@ import HorizontalCard_small from '../components/home/HorizontalCard_small'
 import Animated, { set, useCode, cond, eq } from 'react-native-reanimated';
 import { ScrollView, State, TapGestureHandler } from 'react-native-gesture-handler';
 import Carousel from 'react-native-snap-carousel'
+import moment from "moment"
 
 import HomeMap_actoin_card from '../components/HomeMap_action_card'
 import HomeMap_model from '../components/HomeMap_model'
@@ -23,6 +26,7 @@ import Info_model from '../components/Info_model'
 import DraggableFlatListComponent from '../components/DraggableFlatListComponent'
 import GooglePlacesInput from '../components/GooglePlacesInput'
 import AnimatedSheet from '../components/AnimatedSheet'
+import AddCurrentLocationSheet from '../components/AddCurrentLocationSheet'
 
 
 const { width, height } = Dimensions.get('screen')
@@ -31,7 +35,7 @@ const CollectionMap = ({navigation}) => {
     const [latitude, setLatitude] = useState(null)
     const [longitude, setLongitude] = useState(null)
     const [isMapready, setIsMapready] = useState(false)
-    const [location, setLocation] = useState(null)
+    const [location, setLocation] = useState([])
     const [destination, setDestination] = useState([])
     const [desLatitude, setDesLatitude] = useState([])
     const [desLongitude, setDesLongitude] = useState([])
@@ -45,8 +49,16 @@ const CollectionMap = ({navigation}) => {
     const [isInfoModel, setIsInfoModel] = useState(false)
     const textInput = useRef(null);
     const [editModel, setEditModel] = useState(false)
+    const [editCurModel, setEditCurModel] = useState(false)
     let translateY = new Animated.Value(300)
-    
+
+    const dispatch = useDispatch();
+    const postReducer = useSelector(state => state.postReducer)
+    const userReducer = useSelector(state => state.userReducer)
+    const userId = userReducer.loginSucces ?  userReducer.loginSucces.userId : null
+    const userData = userReducer.userData ?  userReducer.userData : null
+    const ID = userId ? userId: userData._id
+    const postInfo = postReducer.postInfo ? postReducer.postInfo: null
 
     const findCoordinates = async() => {
 		navigator.geolocation.getCurrentPosition(
@@ -91,7 +103,7 @@ const CollectionMap = ({navigation}) => {
     const mergeCoords = () => {
         const hasStartAndEnd = latitude !== null && desLatitude !== [] && longitude !== null && desLongitude !== []
 
-        console.log(desLatitude,desLongitude)
+        // console.log(desLatitude,desLongitude)
         
         if (hasStartAndEnd) {
             desLatitude.map((l, idx) => {
@@ -153,18 +165,15 @@ const CollectionMap = ({navigation}) => {
                     </View>
                     <Callout
                         tooltip
-                        onPress={() => {setIsoptionWindow(true)}}
+                        //onPress={() => {setIsoptionWindow(true)}}
                     >
                         <View style={{display: 'flex', height:50, marginLeft: 30}}>
                             <View style={styles.bubble}>
                                 <View style={{flexDirection: 'row'}}>
                                     <View style={{flex: 3, alignContent: 'center', justifyContent: 'center'}}>
                                         <Text>
-                                            Midtown Marta station, Atlanta
+                                            {location.name}
                                         </Text>
-                                    </View>
-                                    <View style={{flex: 1, alignContent: 'center', justifyContent: 'center'}}>
-                                    <IconButton icon="plus" onPress={() => {props.setIsoptionArea(true)}} color='#50a39b'/>
                                     </View>
                                 </View>
                             </View>
@@ -181,16 +190,21 @@ const CollectionMap = ({navigation}) => {
     /**
      * Insert blue marker to the trip
      */
-    const insertLocation = (latitude, longitude) => {
-        console.log(location)
+    const insertLocation = (name, body, lat, lng) => {
+        // console.log(location)
+        if (lat === -1){
+            lat = latitude
+            lng = longitude
+        }
         const newLocation = {
-                name: "New Location",
+                name: name,
                 address: "330 happy street",
                 coords: {
-                latitude: latitude, 
-                longitude: longitude
+                    latitude: lat, 
+                    longitude: lng
                 },
-                image_url: "https://media.glassdoor.com/l/de/cd/ae/b6/the-face-shop.jpg"
+                image_url: "https://media.glassdoor.com/l/de/cd/ae/b6/the-face-shop.jpg",
+                body: body
             }
         setLocation(prevState => [...prevState, newLocation])
     }
@@ -199,7 +213,8 @@ const CollectionMap = ({navigation}) => {
      * Render unordered markers
      */
     const renderUnorderedMarkers = () => {
-        const locations  = locations_1
+        //const locations  = locations_1
+        const locations  = []
         return (
           <View>
             {
@@ -216,7 +231,7 @@ const CollectionMap = ({navigation}) => {
                     <Callout
                         tooltip
                         onPress={() => {
-                            insertLocation(latitude, longitude)
+                            insertLocation('unOrdered', latitude, longitude)
                         }}
                     >
                         <View style={{display: 'flex', height:60, marginLeft: 30}}>
@@ -243,7 +258,8 @@ const CollectionMap = ({navigation}) => {
     }
 
 
-    useEffect(() => { setLocation(locations) }, [])
+    //useEffect(() => { setLocation(locations) }, [])
+    useEffect(() => { setLocation([]) }, [])
     useEffect(() => {
         //console.log(location)
         setNavigateCoords([])
@@ -253,7 +269,9 @@ const CollectionMap = ({navigation}) => {
     const renderMarker = () => {
         let lat = 0.0
         let lng = 0.0
+        let name = ''
         if (searchResults){
+            name = searchResults.data.structured_formatting.main_text
             lat = searchResults.details.geometry.location.lat
             lng = searchResults.details.geometry.location.lng
             return (
@@ -268,7 +286,7 @@ const CollectionMap = ({navigation}) => {
                       <Callout
                           tooltip
                           onPress={() => {
-                              insertLocation(lat, lng)
+                              insertLocation(name, '', lat, lng)
                               setSearchResults(null)
                           }}
                       >
@@ -277,7 +295,7 @@ const CollectionMap = ({navigation}) => {
                                   <View style={{flexDirection: 'row'}}>
                                       <View style={{flex: 3, alignContent: 'center', justifyContent: 'center'}}>
                                           <Text>
-                                              New Marker
+                                              {name}
                                           </Text>
                                       </View>
                                       <View style={{flex: 1, alignContent: 'center', justifyContent: 'center'}}>
@@ -294,6 +312,64 @@ const CollectionMap = ({navigation}) => {
         
         return (<></>)
     }
+
+    const handleBodyUpdate = (body) => {
+        // console.log('new Body: ', body, ' for ', activeIndex)
+        setLocation(location.map((o, index) => {
+            if ( index === activeIndex) return {...o, body: body}
+            return o;
+          }))
+    }
+
+    const HandleSaveLeave = () => {
+        let dataToSubmit = {
+            author: ID,
+            title: `${moment().unix()}`,
+            type: 'Journey'
+        };
+
+        setTimeout(() => {
+              dispatch(createPost(dataToSubmit)).then(response => {
+                  if (response.payload.success) {
+                      // console.log('post created! set postId to: ', response.payload.postInfo._id)
+                      console.log('post created!')
+                  } else {
+                      console.log('error: ',response.payload)
+                  }
+                })
+        }, 100);
+    }
+
+    const HandleCreatePlaces = (postId) => {
+
+        let dataToSubmit = {
+            postId: postId,
+            title: `${moment().unix()}`,
+            order: 0,
+            image: 'url',
+            body: 'content',
+            coords: {latitude, longitude},
+            name: 'My place',
+            address: 'here'
+        };
+
+        setTimeout(() => {
+            dispatch(createPlace(dataToSubmit)).then(response => {
+                if (response.payload.success) {
+                    console.log('Place created!', response)
+                } else {
+                    console.log('error: ',response.payload)
+                }
+              })
+      }, 100);
+    }
+
+    useEffect(() => {
+        if(postInfo){
+            console.log('postInfo id: ', postInfo.postInfo._id)
+            HandleCreatePlaces(postInfo.postInfo._id)
+        }
+    }, [postInfo])
 
     return (
         <SafeAreaView style={{flex: 1}}>
@@ -333,26 +409,32 @@ const CollectionMap = ({navigation}) => {
                     color='#50a39b'
                     small
                     icon='close'
-                    onPress={() =>
+                    onPress={() => {
+                        HandleSaveLeave()
                         navigation.navigate('HomeBottomTabNavigator')
-                    }
+                    }}
                 />
                 <FAB
                     style={styles.fab_right}
                     color='#50a39b'
                     small
-                    icon='information-outline'
-                    onPress={() => {setIsInfoModel(true)}}
-                />
-                <FAB
-                    style={styles.fab_editor}
-                    color='#50a39b'
-                    icon='file-document-outline'
+                    icon='book-open'
                     onPress={() => 
                         navigation.navigate('Editor')
                     }
+                    //onPress={() => {setIsInfoModel(true)}}
                 />
-                
+                {location ? (
+                <FAB
+                    style={{...styles.fab_addCur, bottom: location.length == 0 ? 0: 170}}
+                    color='#50a39b'
+                    icon='marker-check'
+                    onPress={() => 
+                        // setEditCurModel(true)
+                        insertLocation(`${latitude}, ${longitude}`, '',latitude, longitude )
+                    }
+                />
+                ) : (<></>)}
                 <View style={styles.search}>
                     <Icon
                         name='ios-search' 
@@ -378,7 +460,7 @@ const CollectionMap = ({navigation}) => {
                 <View>
                     <Info_model isInfoModel={isInfoModel} setIsInfoModel={setIsInfoModel}/>
                 </View>
-                {location ? (
+                {location.length > 0 ? (
                 <View style={styles.buttonScroll}>
                     <DraggableFlatListComponent 
                         location={location} 
@@ -388,14 +470,24 @@ const CollectionMap = ({navigation}) => {
                     />
                 </View>
                 ) : (<></>)}
-                {location ? (
+                {location.length > 0 ? (
                     <AnimatedSheet 
+                        activeIndex = {activeIndex}
+                        name = {location[parseInt(activeIndex)].name}
+                        body = {location[parseInt(activeIndex)].body}
                         imgUri={require('../../assets/img/rotterdam.jpg')}
                         setEditModel={setEditModel}
                         editModel={editModel}
                         translateY={translateY}
+                        handleBodyUpdate={handleBodyUpdate}
                     ></AnimatedSheet>
                 ) : (<></>)}
+                {/* <AddCurrentLocationSheet 
+                    setEditCurModel={setEditCurModel}
+                    editCurModel={editCurModel}
+                    translateY={translateY}
+                    insertLocation={insertLocation}
+                ></AddCurrentLocationSheet> */}
 
                 
             </View>
@@ -482,13 +574,12 @@ const styles = StyleSheet.create({
         elevation: 5,
         overflow: 'hidden'
     },
-    fab_editor: {
+    fab_addCur: {
         position: 'absolute',
         marginHorizontal: 10,
         marginVertical: 50,
         right: 0,
-        backgroundColor: 'white',
-        bottom: 170
+        backgroundColor: 'white'
     }
 })
 

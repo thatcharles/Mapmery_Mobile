@@ -11,12 +11,12 @@ import { locations } from "../locations";
 
 const {width,height} = Dimensions.get('window')
  
-const exampleData = [...Array(20)].map((d, index) => ({
-  key: `item-${index}`, // For example only -- don't use index as your key!
-  label: index,
-  backgroundColor: `rgb(${Math.floor(Math.random() * 255)}, ${index *
-    5}, ${132})`
-}));
+// const exampleData = [...Array(20)].map((d, index) => ({
+//   key: `item-${index}`, // For example only -- don't use index as your key!
+//   label: index,
+//   backgroundColor: `rgb(${Math.floor(Math.random() * 255)}, ${index *
+//     5}, ${132})`
+// }));
  
 class DraggableFlatListComponent extends Component {
   constructor(props) {
@@ -28,17 +28,16 @@ class DraggableFlatListComponent extends Component {
 
   componentDidMount = () =>  {
     this.setState(
-      { data: this.props.location },
-      () => console.log('data:', this.state)
+      { data: this.props.location }
     )
-    console.log('DraggableFlatListComponent: ', this.props.gestureHandler)
+    // console.log('DraggableFlatListComponent: ', this.props.gestureHandler)
   }
 
   componentDidUpdate(prevProps) {
     if (this.props.location !== prevProps.location) {
       this.setState(
         { data: this.props.location },
-        () => console.log('data:', this.state)
+        //() => console.log('data in DraggableFlatListComponent:', this.state)
       )
     }
   }
@@ -53,30 +52,35 @@ class DraggableFlatListComponent extends Component {
           borderRadius: 15,
           alignItems: "center",
           justifyContent: "center",
-          marginHorizontal: 10
+          marginHorizontal: 15
         }}
         onLongPress={drag}
       >
-        <Collection_card imgUri={require('../../assets/img/rotterdam.jpg')} style={{elevation: 10}} setEditModel={this.props.setEditModel}/>
+        <Collection_card 
+          name={item.name} 
+          body={item.body}
+          imgUri={require('../../assets/img/rotterdam.jpg')} 
+          style={{elevation: 10}} 
+          setEditModel={this.props.setEditModel}/>
       </TouchableOpacity>
     );
   };
  
   render() {
     return (
-      <View style={{ flex: 1 }}>
+      <View style={{ flex: 1}}>
         <DraggableFlatList
           horizontal={true}
           data={this.state.data}
           renderItem={this.renderItem}
           keyExtractor={(item, index) => `draggable-item-${index}`}
           onDragEnd={({ data }) => {
-            //console.log('data after drag', data)
             this.setState({ data })
             this.props.setLocation(data)
           }}
           onScrollOffsetChange={(offset)=>{
-            this.props.setActiveIndex(parseInt(offset / 180))
+            //console.log('offset: ', offset)
+            this.props.setActiveIndex(parseInt(offset / 177))
           }}
         />
       </View>

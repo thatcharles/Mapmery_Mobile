@@ -1,6 +1,7 @@
 export const locations = [
 
     {
+      id: "01",
       name: "Landmark 81",
       address: "208 Nguyễn Hữu Cảnh, Phường 22, Bình Thạnh, Hồ Chí Minh 700000",
       coords: {
