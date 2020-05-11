@@ -14,6 +14,8 @@ export const UPDATE_USER = 'update_user';
 // Post Types
 export const CREATE_POST = 'create_post'
 export const CREATE_PLACE = 'create_place'
+export const GET_POSTS = 'get_posts'
+export const GET_PLACES_BY_POST = 'get_places_by_post'
 
 /**
  * For local development
@@ -119,6 +121,19 @@ export function createPost(dataToSubmit){
   }
 }
 
+export function getPosts(){
+  const request = axios.get('https://mapmory.herokuapp.com/api/post/getPosts')
+  .then(response => response.data);
+  // const request = axios.get(`http://${api}/api/post/getPosts`)
+  //   .then(response => response.data)
+
+  return {
+      type: GET_POSTS,
+      payload: request
+  }
+
+}
+
 export function createPlace(dataToSubmit){
   const request = axios.post('https://mapmory.herokuapp.com/api/place/createPlace',dataToSubmit)
       .then(response => response.data);
@@ -129,7 +144,19 @@ export function createPlace(dataToSubmit){
       type: CREATE_PLACE,
       payload: request
   }
-} 
+}  getPlacesByPost
+
+export function getPlacesByPost(dataToSubmit){
+  const request = axios.post('https://mapmory.herokuapp.com/api/place/getPlacesByPost',dataToSubmit)
+      .then(response => response.data);
+  // const request = axios.post(`http://${api}/api/place/getPlacesByPost`, dataToSubmit)
+  // .then(response => response.data);
+  
+  return {
+      type: GET_PLACES_BY_POST,
+      payload: request
+  }
+}
 
 // reducer
 import { combineReducers } from 'redux';
@@ -178,7 +205,11 @@ const postReducer = ( state = {}, action ) =>
       case CREATE_POST:
           return {...state, postInfo: action.payload }
       case CREATE_PLACE:
-        return {...state, placeInfo: action.payload } 
+        return {...state, placeInfo: action.payload }
+      case GET_POSTS:
+        return {...state, postsList: action.payload }
+      case GET_PLACES_BY_POST:
+        return {...state, placesList: action.payload } 
       default:
           return state;
   }

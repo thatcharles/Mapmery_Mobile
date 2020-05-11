@@ -10,8 +10,10 @@ import Card_2col from '../components/home/Card_2col'
 import Tab from '../components/Tab'
 import GridPost from '../components/GridPost'
 import { FAB, List, Portal, Provider } from 'react-native-paper'
+import { useSelector, useDispatch } from 'react-redux'
+import { getPosts } from '../redux/notesApp'
 
-import { posts } from "../posts";
+import { mock_posts } from "../posts";
 
 const {
     Value,
@@ -25,8 +27,9 @@ const {width,height} = Dimensions.get('window')
 const Collection = ({navigation}) => {
 
     const [selectedTab, setSelectedTab] = useState(0)
-    const [loadedPosts, setLoadedPosts] = useState(posts)
+    const [loadedPosts, setLoadedPosts] = useState(mock_posts)
     const [open, setOpen] = useState(null)
+    const [posts, setPosts] = useState([])
 
     const scrollY2 = new Value(0)
     let startHeaderHeight = 80
@@ -82,6 +85,51 @@ const Collection = ({navigation}) => {
         setOpen(open);
     }
 
+    /**
+     * Retrieving data
+     */
+    const postReducer = useSelector(state => state.postReducer)
+    const userReducer = useSelector(state => state.userReducer)
+    const userId = userReducer.loginSucces ?  userReducer.loginSucces.userId : null
+    const userData = userReducer.userData ?  userReducer.userData : null
+    const ID = userId ? userId: userData._id
+
+    const isEmpty = (obj) => {
+        for(var key in obj) {
+            if(obj.hasOwnProperty(key))
+                return false;
+        }
+        return true;
+    }
+
+    useEffect(() => {
+        if(isEmpty(postReducer)){
+            /** TODO:
+             * use a better query not to get all posts but only posts with the current author
+             */
+            dispatch(getPosts()).then(response => {
+                if (response.payload.success) {
+                    console.log('Posts got!')
+                } else {
+                    console.log('error: ',response)
+                }
+            })
+        }
+    }, [])
+
+    useEffect(() => {
+        if(!isEmpty(postReducer)){
+            setPosts([])
+            postReducer.postsList.posts.map(post => {
+                if (post.author){
+                    if (post.author._id === ID){
+                        setPosts(prevState => [...prevState, post])
+                    }
+                }
+            })
+        }
+    }, [postReducer])
+
     return (
         <SafeAreaView style={{flex: 1}}>
             <Transitioning.View 
@@ -136,24 +184,43 @@ const Collection = ({navigation}) => {
                 >
                     {selectedTab === 0 ?(
                         <View style={{marginTop: 40, paddingHorizontal: 20}}>
-                            <TouchableOpacity onPress={() => navigation.navigate('CollectionMap')}>
-                                <Card_big imgUri={require('../../assets/img/rotterdam.jpg')} name={'Journey 2'}/>
-                            </TouchableOpacity>
-                            <Card_big imgUri={require('../../assets/img/rotterdam.jpg')} name={'Journey example'}/>
-                            <Card_big imgUri={require('../../assets/img/rotterdam.jpg')} name={'Journey nice'}/>
-                            <Card_big imgUri={require('../../assets/img/rotterdam.jpg')} name={'Journey LA'}/>
+                            {posts ? (
+                                posts.map((item, index) => {
+                                    return (
+                                        <TouchableOpacity 
+                                            key={'collection-posts-'+item._id}  
+                                            onPress={() => {
+                                                navigation.navigate('CollectionMap', {
+                                                    postId: item._id
+                                                })
+                                            }}
+                                        >
+                                            <Card_big 
+                                                imgUri={require('../../assets/img/rotterdam.jpg')} 
+                                                name={item.title}
+                                                author={item.author.lastname + " " + item.author.name}
+                                                avatar={item.author.image}
+                                            />
+                                        </TouchableOpacity>
+                                    )
+                                })
+                            ):(<></>)}
                         </View>
                     ):(
                         <>
                         <View style={styles.imageContainer}>
-                            {loadedPosts.map(post => 
+                            
+                            {loadedPosts ?(loadedPosts.map(post => 
                                 {
                                     return (<GridPost key={post.id} post={post} width={130}/>)
                                 }
-                            )}
+                            )):(<></>) }
                         </View>
                         </>
                     )}
+                    <View style={{height: 200, marginTop: 40, justifyContent: 'center', alignItems: 'center'}} >
+                        <Text>No more posts</Text>
+                    </View>
                 </Animated.ScrollView>
                 {selectedTab === 1 ?(
                     <FAB
@@ -168,7 +235,7 @@ const Collection = ({navigation}) => {
                                     icon={open ? 'close' : 'plus'}
                                     color={open ? 'white' : '#50a39b'}
                                     actions={[
-                                        { icon: 'alpha-m', label: 'Mapnory Trip', onPress: () => navigation.navigate('CollectionMap')},
+                                        { icon: 'alpha-m', label: 'Mapmory Trip', onPress: () => navigation.navigate('CollectionMap')},
                                         { icon: 'flag-variant-outline', label: 'Spot', onPress: () => console.log('Pressed Spot') },
                                     ]}
                                     onStateChange={_onStateChange}

@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Text, View, SafeAreaView, Platform, StatusBar, ScrollView, Image, Dimensions } from 'react-native'
 const {width,height} = Dimensions.get('window')
+import { Avatar} from 'react-native-paper'
 
 const Car_big = (props, {navigation}) => {
     return (
@@ -10,8 +11,12 @@ const Car_big = (props, {navigation}) => {
                         style={{flex:1, width: null, height: null, resizeMode: 'cover', borderTopLeftRadius: 5, borderTopRightRadius: 5}}
                 ></Image>
             </View>
-            <View style={{flex:1}}>
-                <Text style={{flex:1, paddingLeft: 10, paddingTop: 10}}>{props.name}</Text>
+            <View style={{flex:1, flexDirection: 'row'}}>
+                <Avatar.Image size={48} style={{margin: 10}} source={{uri: props.avatar ? props.avatar : null}} />
+                <View style={{justifyContent: 'center', alignContent: 'center'}}>
+                    <Text style={{marginHorizontal: 10}}>{props.name}</Text>
+                    <Text style={{marginHorizontal: 10}}>By {props.author}</Text>
+                </View>
             </View>
         </View>
     )

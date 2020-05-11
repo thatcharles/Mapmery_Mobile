@@ -5,7 +5,7 @@ import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/Ionicons'
 import DraggableFlatList from "react-native-draggable-flatlist";
 import { useSelector, useDispatch } from 'react-redux'
-import { createPost, createPlace } from '../redux/notesApp'
+import { createPost, createPlace, getPlacesByPost } from '../redux/notesApp'
 
 import MapView, {Marker, Callout} from 'react-native-maps';
 import { locations } from "../locations";
@@ -21,6 +21,7 @@ import moment from "moment"
 
 import HomeMap_actoin_card from '../components/HomeMap_action_card'
 import HomeMap_model from '../components/HomeMap_model'
+import SaveTitle_model from '../components/SaveTitle_model'
 import HomeMapOptionWindow from '../components/HomeMapOptionWindow'
 import Info_model from '../components/Info_model'
 import DraggableFlatListComponent from '../components/DraggableFlatListComponent'
@@ -47,6 +48,8 @@ const CollectionMap = ({navigation}) => {
     const [isoptionWindow, setIsoptionWindow]  = useState(false)
     const [searchResults, setSearchResults] = useState(null)
     const [isInfoModel, setIsInfoModel] = useState(false)
+    const [isSaveTitle, setIsSaveTitle] = useState(false)
+    const [title, setTitle] = useState(null)
     const textInput = useRef(null);
     const [editModel, setEditModel] = useState(false)
     const [editCurModel, setEditCurModel] = useState(false)
@@ -259,7 +262,34 @@ const CollectionMap = ({navigation}) => {
 
 
     //useEffect(() => { setLocation(locations) }, [])
-    useEffect(() => { setLocation([]) }, [])
+    useEffect(() => { 
+        if (navigation.state.params){
+            if (navigation.state.params.postId){
+                let dataToSubmit = {
+                    postId: navigation.state.params.postId
+                };
+                dispatch(getPlacesByPost(dataToSubmit)).then(response => {
+                    if (response.payload.success) {
+                        // console.log('post created! set postId to: ', response.payload.postInfo._id)
+                        //console.log('Places get: ', response.payload.places )
+                        setLocation(response.payload.places ) 
+                    } else {
+                        console.log('error: ',response.payload)
+                    }
+                  })
+            }
+        }
+        else {
+            setLocation([]) 
+        }
+    }, [])
+
+    // useEffect(() => {
+    //     if(postReducer.placesList){
+    //         console.log(postReducer.placesList)
+    //     }
+    // }, [postReducer])
+
     useEffect(() => {
         //console.log(location)
         setNavigateCoords([])
@@ -324,36 +354,43 @@ const CollectionMap = ({navigation}) => {
     const HandleSaveLeave = () => {
         let dataToSubmit = {
             author: ID,
-            title: `${moment().unix()}`,
+            title: title,
             type: 'Journey'
         };
 
-        setTimeout(() => {
-              dispatch(createPost(dataToSubmit)).then(response => {
-                  if (response.payload.success) {
-                      // console.log('post created! set postId to: ', response.payload.postInfo._id)
-                      console.log('post created!')
-                  } else {
-                      console.log('error: ',response.payload)
-                  }
-                })
-        }, 100);
+        if (!navigation.state.params){
+            setTimeout(() => {
+                  dispatch(createPost(dataToSubmit)).then(response => {
+                      if (response.payload.success) {
+                          // console.log('post created! set postId to: ', response.payload.postInfo._id)
+                          console.log('post created!')
+                      } else {
+                          console.log('error: ',response.payload)
+                      }
+                    })
+            }, 100);
+        }
+        else{
+            // console.log('just check out post: ', navigation.state.params.postId)
+        }
+        // test
+        navigation.navigate('HomeBottomTabNavigator')
     }
 
-    const HandleCreatePlaces = (postId) => {
+    const HandleCreatePlaces = (newPostId) => {
 
-        let dataToSubmit = {
-            postId: postId,
-            title: `${moment().unix()}`,
-            order: 0,
-            image: 'url',
-            body: 'content',
-            coords: {latitude, longitude},
-            name: 'My place',
-            address: 'here'
-        };
+        location.map((place, index) => {
+            let dataToSubmit = {
+                postId: newPostId,
+                title: `${moment().unix()}`,
+                order: index,
+                image: place.image_url,
+                body: place.body,
+                coords: place.coords,
+                name: place.name,
+                address: place.address
+            };
 
-        setTimeout(() => {
             dispatch(createPlace(dataToSubmit)).then(response => {
                 if (response.payload.success) {
                     console.log('Place created!', response)
@@ -361,7 +398,8 @@ const CollectionMap = ({navigation}) => {
                     console.log('error: ',response.payload)
                 }
               })
-      }, 100);
+
+        })
     }
 
     useEffect(() => {
@@ -370,6 +408,12 @@ const CollectionMap = ({navigation}) => {
             HandleCreatePlaces(postInfo.postInfo._id)
         }
     }, [postInfo])
+
+    useEffect(() => {
+        if(title){
+            HandleSaveLeave()
+        }
+    }, [title])
 
     return (
         <SafeAreaView style={{flex: 1}}>
@@ -410,8 +454,15 @@ const CollectionMap = ({navigation}) => {
                     small
                     icon='close'
                     onPress={() => {
-                        HandleSaveLeave()
-                        navigation.navigate('HomeBottomTabNavigator')
+                        if(navigation.state.params){
+                            if(navigation.state.params.postId){
+                                console.log('just check out post: ', navigation.state.params.postId)
+                                navigation.navigate('HomeBottomTabNavigator')
+                            }
+                        }
+                        else{
+                            setIsSaveTitle(true)
+                        }
                     }}
                 />
                 <FAB
@@ -459,6 +510,9 @@ const CollectionMap = ({navigation}) => {
                 </View>
                 <View>
                     <Info_model isInfoModel={isInfoModel} setIsInfoModel={setIsInfoModel}/>
+                </View>
+                <View>
+                    <SaveTitle_model setIsSaveTitle={setIsSaveTitle} isSaveTitle={isSaveTitle} setTitle={setTitle}/>
                 </View>
                 {location.length > 0 ? (
                 <View style={styles.buttonScroll}>

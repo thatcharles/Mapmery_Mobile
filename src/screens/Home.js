@@ -11,6 +11,7 @@ import Tag from '../components/home/Tag'
 import Animated, { set } from 'react-native-reanimated';
 import { FAB } from 'react-native-paper'
 import { useSelector, useDispatch } from 'react-redux'
+import { getPosts } from '../redux/notesApp'
 
 const {
     Value,
@@ -24,6 +25,8 @@ const {width,height} = Dimensions.get('window')
 const Home = ({ navigation }) => {
 
     const [isAuth, setIsAuth] = useState(false)
+    const [posts, setPosts] = useState(false)
+    const [postsUpdate, setPostsUpdate] = useState(null)
 
     const scrollY = new Value(0)
     let startHeaderHeight = 80
@@ -57,6 +60,8 @@ const Home = ({ navigation }) => {
     const userId = userReducer.loginSucces ?  userReducer.loginSucces.userId : null
     const userData = userReducer.userData ?  userReducer.userData : null
 
+    const postReducer = useSelector(state => state.postReducer)
+
     const isEmpty = (obj) => {
         for(var key in obj) {
             if(obj.hasOwnProperty(key))
@@ -72,6 +77,38 @@ const Home = ({ navigation }) => {
         }
     }, [])
 
+    useEffect(() => {
+        if(isEmpty(postReducer)){
+            dispatch(getPosts()).then(response => {
+                if (response.payload.success) {
+                    console.log('Posts got!')
+                } else {
+                    console.log('error: ',response)
+                }
+            })
+        }
+    }, [])
+
+    useEffect(() => {
+        console.log('postReducer updated')
+        if(!isEmpty(postReducer)){
+            //console.log('postReducer: ', postReducer.postsList.posts)
+            if (postReducer.postInfo){
+                if (postsUpdate != postReducer.postInfo.postInfo._id){
+                    console.log('new post found, ready to reterive: ', postReducer.postInfo.postInfo._id)
+                    setPostsUpdate(postReducer.postInfo.postInfo._id)
+                    dispatch(getPosts()).then(response => {
+                        if (response.payload.success) {
+                            console.log('New posts got!')
+                        } else {
+                            console.log('error: ',response)
+                        }
+                    })
+                }
+            }
+            setPosts(postReducer.postsList.posts)
+        }
+    }, [postReducer])
 
     return (
         <SafeAreaView style={{flex: 1}}>
@@ -107,7 +144,7 @@ const Home = ({ navigation }) => {
                             )
                         }
                 >
-                    <View style={{flex:1, backgroundColor: 'white', paddingTop: 20}}>
+                    {/* <View style={{flex:1, backgroundColor: 'white', paddingTop: 20}}>
                         <Text style={{fontSize: 24, fontWeight: '700', paddingHorizontal: 20}}> Home </Text>
                     </View>
                     <View style={{height: 130, marginTop: 20}}>
@@ -119,23 +156,38 @@ const Home = ({ navigation }) => {
                             <HorizontalCard_small imgUri={require('../../assets/img/rotterdam.jpg')} name={'home 1'}/>
                             <HorizontalCard_small imgUri={require('../../assets/img/rotterdam.jpg')} name={'home 1'}/>
                         </ScrollView>
-                    </View>
+                    </View> */}
                     <View style={{marginTop: 40, paddingHorizontal: 20}}>
-                        <Text style={{fontSize: 24, fontWeight: '700'}}>Introducing Plus</Text>
-                        <Card_big imgUri={require('../../assets/img/rotterdam.jpg')} name={'home 2'}/>
-                        <Card_big imgUri={require('../../assets/img/rotterdam.jpg')} name={'home example'}/>
+                        <Text style={{fontSize: 24, fontWeight: '700'}}>Explore the world</Text>
+                        {posts ? (
+                            posts.map((item, index) => {
+                                if (item.author){
+                                    return (<Card_big 
+                                        key={'post-'+index} 
+                                        imgUri={require('../../assets/img/rotterdam.jpg')} 
+                                        name={item.title}
+                                        author={item.author.lastname + " " + item.author.name}
+                                        avatar={item.author.image}
+                                        />
+                                    )
+                                }
+                            })
+                        ):(<></>)}
+                        <View style={{height: 200, marginTop: 40, justifyContent: 'center', alignItems: 'center'}} >
+                            <Text>No more posts</Text>
+                        </View>
                     </View>
-                    <View style={{marginTop: 40, }}>
+                    {/* <View style={{marginTop: 40, }}>
                         <Text style={{fontSize: 24, fontWeight: '700', paddingHorizontal: 20}}>
                             Around the world
-                        </Text>
+                        </Text> */}
                         {/** flexDirection: 'row', flexWrap: 'wrap' help make the cards align in 2 columns */}
-                        <View style={{marginTop: 20, paddingHorizontal: 20, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between'}}>
+                        {/* <View style={{marginTop: 20, paddingHorizontal: 20, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between'}}>
                             <Card_2col imgUri={require('../../assets/img/rotterdam.jpg')} type={'vacation house'} name={'home 0'} price={'90$'} starRating={4}/>
                             <Card_2col imgUri={require('../../assets/img/rotterdam.jpg')} type={'vacation house'} name={'home 0'} price={'90$'} starRating={3}/>
                             <Card_2col imgUri={require('../../assets/img/rotterdam.jpg')} type={'vacation house'} name={'home 0'} price={'90$'} starRating={3.5}/>
                         </View>
-                    </View>
+                    </View> */}
                 </Animated.ScrollView>
                 <FAB
                     style={styles.fab}
