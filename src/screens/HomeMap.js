@@ -345,7 +345,7 @@ const HomeMap = ({navigation}) => {
                     <Carousel
                         layout={"default"}
                         ref={ref => React.createRef()}
-                        data={posts ? posts : null}
+                        data={posts ? posts : []}
                         sliderWidth={400}
                         itemWidth={250}
                         renderItem={_renderItem}

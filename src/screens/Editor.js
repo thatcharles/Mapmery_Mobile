@@ -24,8 +24,19 @@ const Editor = ({navigation}) => {
     const delta = new Delta([
         { insert: 'The Two Towers' },
         { insert: '\n', attributes: { header: 1 } },
-        { insert: 'Aragorn sped on up the hill.\n' }
+        { insert: 'Aragorn sped on up the hill.\n' },
+        { insert: navigation.state.params.body[0].name + '\n' }
       ]);
+
+    const createDelta = location => {
+        return (
+            new Delta([
+                { insert: location.name },
+                { insert: '\n', attributes: { header: 1 } },
+                { insert: 'Aragorn sped on up the hill.\n' }
+            ])
+        )
+    }
 
     return (
         <SafeAreaView style={{ flex: 1 }}>

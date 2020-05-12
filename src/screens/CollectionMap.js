@@ -271,7 +271,7 @@ const CollectionMap = ({navigation}) => {
                 dispatch(getPlacesByPost(dataToSubmit)).then(response => {
                     if (response.payload.success) {
                         // console.log('post created! set postId to: ', response.payload.postInfo._id)
-                        //console.log('Places get: ', response.payload.places )
+                        // console.log('Places get: ', response.payload.places )
                         setLocation(response.payload.places ) 
                     } else {
                         console.log('error: ',response.payload)
@@ -337,6 +337,9 @@ const CollectionMap = ({navigation}) => {
         return (<></>)
     }
 
+    /**
+     * Work with editor here
+     */
     const handleBodyUpdate = (body) => {
         // console.log('new Body: ', body, ' for ', activeIndex)
         setLocation(location.map((o, index) => {
@@ -465,8 +468,11 @@ const CollectionMap = ({navigation}) => {
                     color='#50a39b'
                     small
                     icon='book-open'
-                    onPress={() => 
-                        navigation.navigate('Editor')
+                    onPress={() => {
+                        navigation.navigate('Editor',{
+                            body: location || null
+                        })
+                    }
                     }
                     //onPress={() => {setIsInfoModel(true)}}
                 />
