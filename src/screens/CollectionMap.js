@@ -246,7 +246,7 @@ const CollectionMap = ({navigation}) => {
                                         </Text>
                                     </View>
                                     <View style={{flex: 1, alignContent: 'center', justifyContent: 'center'}}>
-                                    <IconButton icon="plus" onPress={() => {props.setIsoptionArea(true)}} color='#50a39b'/>
+                                    <IconButton icon="plus" color='#50a39b'/>
                                     </View>
                                 </View>
                             </View>
@@ -283,12 +283,6 @@ const CollectionMap = ({navigation}) => {
             setLocation([]) 
         }
     }, [])
-
-    // useEffect(() => {
-    //     if(postReducer.placesList){
-    //         console.log(postReducer.placesList)
-    //     }
-    // }, [postReducer])
 
     useEffect(() => {
         //console.log(location)
@@ -329,7 +323,7 @@ const CollectionMap = ({navigation}) => {
                                           </Text>
                                       </View>
                                       <View style={{flex: 1, alignContent: 'center', justifyContent: 'center'}}>
-                                      <IconButton icon="plus" onPress={() => {props.setIsoptionArea(true)}} color='#50a39b'/>
+                                      <IconButton icon="plus" color='#50a39b'/>
                                       </View>
                                   </View>
                               </View>
@@ -358,7 +352,7 @@ const CollectionMap = ({navigation}) => {
             type: 'Journey'
         };
 
-        if (!navigation.state.params){
+        if (!navigation.state.params.postId){
             setTimeout(() => {
                   dispatch(createPost(dataToSubmit)).then(response => {
                       if (response.payload.success) {
@@ -439,7 +433,7 @@ const CollectionMap = ({navigation}) => {
                                     <MapView.Polyline
                                         key={idx + 'Polyline'}
                                         strokeWidth={2}
-                                        strokeColor="red"
+                                        strokeColor= {navigation.state.params.polylineColor ? navigation.state.params.polylineColor : "red"}
                                         coordinates={polyline}
                                     />
                                 ))
@@ -459,6 +453,7 @@ const CollectionMap = ({navigation}) => {
                                 console.log('just check out post: ', navigation.state.params.postId)
                                 navigation.navigate('HomeBottomTabNavigator')
                             }
+                            else{setIsSaveTitle(true)}
                         }
                         else{
                             setIsSaveTitle(true)
@@ -475,7 +470,7 @@ const CollectionMap = ({navigation}) => {
                     }
                     //onPress={() => {setIsInfoModel(true)}}
                 />
-                {location ? (
+                {location && !navigation.state.params.viewOnly ? (
                 <FAB
                     style={{...styles.fab_addCur, bottom: location.length == 0 ? 0: 170}}
                     color='#50a39b'

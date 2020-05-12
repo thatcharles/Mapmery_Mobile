@@ -16,6 +16,7 @@ export const CREATE_POST = 'create_post'
 export const CREATE_PLACE = 'create_place'
 export const GET_POSTS = 'get_posts'
 export const GET_PLACES_BY_POST = 'get_places_by_post'
+export const GET_PLACES = 'get_places'
 
 /**
  * For local development
@@ -60,11 +61,11 @@ export function registerUser(dataToSubmit){
 }
 
 export function loginUser(dataToSubmit){
-  const request = axios.post('https://mapmory.herokuapp.com/api/users/login',dataToSubmit)
-              .then(response => response.data);
+  // const request = axios.post('https://mapmory.herokuapp.com/api/users/login',dataToSubmit)
+  //             .then(response => response.data);
 
-  // const request = axios.post(`http://${api}/api/users/login`, dataToSubmit)
-  //   .then(response => response.data);
+  const request = axios.post(`http://${api}/api/users/login`, dataToSubmit)
+    .then(response => response.data);
 
   return {
       type: LOGIN_USER,
@@ -73,10 +74,10 @@ export function loginUser(dataToSubmit){
 }
 
 export function auth(){
-  const request = axios.get('https://mapmory.herokuapp.com/api/users/auth')
-  .then(response => response.data);
-  // const request = axios.get(`http://${api}/api/users/auth`)
+  // const request = axios.get('https://mapmory.herokuapp.com/api/users/auth')
   // .then(response => response.data);
+  const request = axios.get(`http://${api}/api/users/auth`)
+  .then(response => response.data);
 
   return {
       type: AUTH_USER,
@@ -95,10 +96,10 @@ export function logoutUser(){
 }
 
 export async function updateUser(dataToSubmit){
-  const request = await axios.post('https://mapmory.herokuapp.com/api/users/update', dataToSubmit)
-    .then(response => response.data);
-  // const request = await axios.post(`http://${api}/api/users/update`, dataToSubmit)
-  //     .then(response => response.data);
+  // const request = await axios.post('https://mapmory.herokuapp.com/api/users/update', dataToSubmit)
+  //   .then(response => response.data);
+  const request = await axios.post(`http://${api}/api/users/update`, dataToSubmit)
+      .then(response => response.data);
 
   
   return {
@@ -110,10 +111,10 @@ export async function updateUser(dataToSubmit){
 /*********** Post Action Creators ************/
 
 export function createPost(dataToSubmit){
-  const request = axios.post('https://mapmory.herokuapp.com/api/post/createPost',dataToSubmit)
-      .then(response => response.data);
-  // const request = axios.post(`http://${api}/api/post/createPost`, dataToSubmit)
-  // .then(response => response.data);
+  // const request = axios.post('https://mapmory.herokuapp.com/api/post/createPost',dataToSubmit)
+  //     .then(response => response.data);
+  const request = axios.post(`http://${api}/api/post/createPost`, dataToSubmit)
+  .then(response => response.data);
   
   return {
       type: CREATE_POST,
@@ -122,10 +123,10 @@ export function createPost(dataToSubmit){
 }
 
 export function getPosts(){
-  const request = axios.get('https://mapmory.herokuapp.com/api/post/getPosts')
-  .then(response => response.data);
-  // const request = axios.get(`http://${api}/api/post/getPosts`)
-  //   .then(response => response.data)
+  // const request = axios.get('https://mapmory.herokuapp.com/api/post/getPosts')
+  // .then(response => response.data);
+  const request = axios.get(`http://${api}/api/post/getPosts`)
+    .then(response => response.data)
 
   return {
       type: GET_POSTS,
@@ -135,25 +136,37 @@ export function getPosts(){
 }
 
 export function createPlace(dataToSubmit){
-  const request = axios.post('https://mapmory.herokuapp.com/api/place/createPlace',dataToSubmit)
-      .then(response => response.data);
-  // const request = axios.post(`http://${api}/api/place/createPlace`, dataToSubmit)
-  // .then(response => response.data);
+  // const request = axios.post('https://mapmory.herokuapp.com/api/place/createPlace',dataToSubmit)
+  //     .then(response => response.data);
+  const request = axios.post(`http://${api}/api/place/createPlace`, dataToSubmit)
+  .then(response => response.data);
   
   return {
       type: CREATE_PLACE,
       payload: request
   }
-}  getPlacesByPost
+} 
 
 export function getPlacesByPost(dataToSubmit){
-  const request = axios.post('https://mapmory.herokuapp.com/api/place/getPlacesByPost',dataToSubmit)
-      .then(response => response.data);
-  // const request = axios.post(`http://${api}/api/place/getPlacesByPost`, dataToSubmit)
-  // .then(response => response.data);
+  // const request = axios.post('https://mapmory.herokuapp.com/api/place/getPlacesByPost',dataToSubmit)
+  //     .then(response => response.data);
+  const request = axios.post(`http://${api}/api/place/getPlacesByPost`, dataToSubmit)
+  .then(response => response.data);
   
   return {
       type: GET_PLACES_BY_POST,
+      payload: request
+  }
+}
+
+export function getPlaces(dataToSubmit){
+  // const request = axios.post('https://mapmory.herokuapp.com/api/place/getPlaces',dataToSubmit)
+  //     .then(response => response.data);
+  const request = axios.get(`http://${api}/api/place/getPlaces`)
+  .then(response => response.data);
+  
+  return {
+      type: GET_PLACES,
       payload: request
   }
 }
@@ -210,6 +223,8 @@ const postReducer = ( state = {}, action ) =>
         return {...state, postsList: action.payload }
       case GET_PLACES_BY_POST:
         return {...state, placesList: action.payload } 
+      case GET_PLACES:
+        return {...state, places: action.payload} 
       default:
           return state;
   }

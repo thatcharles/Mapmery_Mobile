@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Text, View, SafeAreaView, Platform, StatusBar, ScrollView, Image, Dimensions, StyleSheet } from 'react-native'
+import { Text, View, SafeAreaView, Platform, StatusBar, ScrollView, Image, Dimensions, StyleSheet, TouchableOpacity } from 'react-native'
 import Header from '../components/Header'
 import { Ionicons } from '@expo/vector-icons'
 import Icon from 'react-native-vector-icons/Ionicons'
@@ -162,13 +162,24 @@ const Home = ({ navigation }) => {
                         {posts ? (
                             posts.map((item, index) => {
                                 if (item.author){
-                                    return (<Card_big 
+                                    return (
+                                        <TouchableOpacity 
                                         key={'post-'+index} 
-                                        imgUri={require('../../assets/img/rotterdam.jpg')} 
-                                        name={item.title}
-                                        author={item.author.lastname + " " + item.author.name}
-                                        avatar={item.author.image}
-                                        />
+                                        onPress={() => {
+                                            navigation.navigate('CollectionMap', {
+                                                postId: item._id,
+                                                viewOnly: true,
+                                                polylineColor: '#50a39b'
+                                            })
+                                        }}
+                                        >
+                                            <Card_big 
+                                                imgUri={require('../../assets/img/rotterdam.jpg')} 
+                                                name={item.title}
+                                                author={item.author.lastname + " " + item.author.name}
+                                                avatar={item.author.image}
+                                                />
+                                        </TouchableOpacity>
                                     )
                                 }
                             })

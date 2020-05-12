@@ -26,7 +26,7 @@ const HomeMapOptionWindow = (props) => {
                         <View style={{...styles.optioncard}}>
                             <View style={{ paddingHorizontal: 10, marginHorizontal: 20, backgroundColor: 'white', height: 50}}>
                                     <Text style={{flex: 1, fontSize: 20 ,fontWeight: '500'}}>
-                                        Midtown Marta station, Atlanta
+                                        {props.place ? props.place.name : null}
                                     </Text>
                             </View>
                             <View style={{ flexDirection: 'row', paddingHorizontal: 10, marginHorizontal: 20, backgroundColor: 'white', marginTop: -25}}>

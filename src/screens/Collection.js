@@ -191,7 +191,8 @@ const Collection = ({navigation}) => {
                                             key={'collection-posts-'+item._id}  
                                             onPress={() => {
                                                 navigation.navigate('CollectionMap', {
-                                                    postId: item._id
+                                                    postId: item._id,
+                                                    viewOnly: false
                                                 })
                                             }}
                                         >
@@ -235,7 +236,9 @@ const Collection = ({navigation}) => {
                                     icon={open ? 'close' : 'plus'}
                                     color={open ? 'white' : '#50a39b'}
                                     actions={[
-                                        { icon: 'alpha-m', label: 'Mapmory Trip', onPress: () => navigation.navigate('CollectionMap')},
+                                        { icon: 'alpha-m', label: 'Mapmory Trip', onPress: () => navigation.navigate('CollectionMap',{
+                                            viewOnly: false
+                                        })},
                                         { icon: 'flag-variant-outline', label: 'Spot', onPress: () => console.log('Pressed Spot') },
                                     ]}
                                     onStateChange={_onStateChange}

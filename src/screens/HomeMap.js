@@ -18,6 +18,9 @@ import HomeMap_actoin_card from '../components/HomeMap_action_card'
 import HomeMap_model from '../components/HomeMap_model'
 import HomeMapOptionWindow from '../components/HomeMapOptionWindow'
 
+import { useSelector, useDispatch } from 'react-redux'
+import { getPosts, getPlaces } from '../redux/notesApp'
+
 const { width, height } = Dimensions.get('screen')
 
 const carouselItems= [
@@ -57,8 +60,51 @@ const HomeMap = ({navigation}) => {
     const [activeIndex, setActiveIndex] = useState(0)
     const [isoptionArea, setIsoptionArea]  = useState(false)
     const [isoptionWindow, setIsoptionWindow]  = useState(false)
+    const [places, setPlaces] = useState(null)
+    const [posts, setPosts] = useState(null)
+    const [placeForSelect, setPlaceforSelect] = useState(null)
     const textInput = useRef(null);
+
     //let textInput = null;
+
+    const dispatch = useDispatch();
+    const postReducer = useSelector(state => state.postReducer)
+
+    const isEmpty = (obj) => {
+        for(var key in obj) {
+            if(obj.hasOwnProperty(key))
+                return false;
+        }
+        return true;
+    }
+
+    useEffect(() => {
+        if(isEmpty(postReducer)){
+            dispatch(getPosts()).then(response => {
+                if (response.payload.success) {
+                    console.log('Posts got in home Map!')
+                    setPosts(response.payload.postsList.posts)
+                } else {
+                    console.log('error: ',response)
+                }
+            })
+        }else{
+            console.log('Home Map already has posts!')
+            // console.log('Home Map Posts: ', postReducer.postsList)
+            setPosts(postReducer.postsList.posts)
+            postReducer.postsList.posts.map((post, index) => {
+                dispatch(getPlaces()).then(response => {
+                    if (response.payload.success) {
+                        // console.log('places: ', response.payload.places)
+                        setPlaces(response.payload.places)
+                    } else {
+                        console.log('error: ',response)
+                    }
+                })
+            })
+        }
+    }, [])
+
 
     const findCoordinates = async() => {
 		navigator.geolocation.getCurrentPosition(
@@ -106,7 +152,7 @@ const HomeMap = ({navigation}) => {
     const mergeCoords = () => {
         const hasStartAndEnd = latitude !== null && desLatitude !== [] && longitude !== null && desLongitude !== []
 
-        console.log(desLatitude,desLongitude)
+        // console.log(desLatitude,desLongitude)
         
         if (hasStartAndEnd) {
             desLatitude.map((l, idx) => {
@@ -172,14 +218,17 @@ const HomeMap = ({navigation}) => {
                   >
                     <Callout
                         tooltip
-                        onPress={() => {setIsoptionWindow(true)}}
+                        onPress={() => {
+                            setPlaceforSelect(location)
+                            setIsoptionWindow(true)
+                        }}
                     >
                         <View style={{display: 'flex', height:60, marginLeft: 30}}>
                             <View style={styles.bubble}>
                                 <View style={{flexDirection: 'row'}}>
                                     <View style={{flex: 3, alignContent: 'center', justifyContent: 'center'}}>
                                         <Text>
-                                            Midtown Marta station, Atlanta
+                                            {location.name}
                                         </Text>
                                     </View>
                                     <View style={{flex: 1, alignContent: 'center', justifyContent: 'center'}}>
@@ -198,27 +247,46 @@ const HomeMap = ({navigation}) => {
     }
 
 
-    useEffect(() => { setLocation(locations) }, [])
+    useEffect(() => { setLocation([]) }, [])
     useEffect(() => {
         findCoordinates()
     }, [location])
 
     const _renderItem = ({item,index}) => {
         return (
-                <HomeMap_actoin_card setIsoptionArea={setIsoptionArea}/>
+                <HomeMap_actoin_card setIsoptionArea={setIsoptionArea} item={item}/>
           )
     }
 
+    const compare = (a, b) => {
+        // Use toUpperCase() to ignore character casing
+        const orderA = a.order;
+        const orderB = b.order;
+      
+        let comparison = 0;
+        if (orderA > orderB) {
+          comparison = 1;
+        } else if (orderB > orderA) {
+          comparison = -1;
+        }
+        return comparison;
+      }
+
     useEffect(() => {
-        if (activeIndex === 0){
+        if(posts && places){
+            let currentPost = posts[activeIndex]
+            // console.log('current post: ', currentPost)
+            let currentPlaces= []
+            places.map(place => {
+                if(place.postId === currentPost._id){
+                    currentPlaces.push(place)
+                }
+            })
+            currentPlaces.sort(compare)
             setNavigateCoords([])
-            setLocation(locations)
+            setLocation(currentPlaces)
         }
-        else if (activeIndex === 1){
-            setNavigateCoords([])
-            setLocation(locations_1)
-        }
-    }, [activeIndex])
+    }, [activeIndex,posts,places])
 
     return (
         <SafeAreaView style={{flex: 1}}>
@@ -242,7 +310,7 @@ const HomeMap = ({navigation}) => {
                                     <MapView.Polyline
                                         key={idx + 'Polyline'}
                                         strokeWidth={2}
-                                        strokeColor="red"
+                                        strokeColor='#50a39b'
                                         coordinates={polyline}
                                     />
                                 ))
@@ -264,14 +332,20 @@ const HomeMap = ({navigation}) => {
                     <HomeMap_model setIsoptionArea={setIsoptionArea} isoptionArea={isoptionArea}/>
                 </View>
                 <View>
-                    <HomeMapOptionWindow imgUri={require('../../assets/img/rotterdam.jpg')} setIsoptionWindow={setIsoptionWindow} isoptionWindow={isoptionWindow} setIsoptionArea={setIsoptionArea}/>
+                    <HomeMapOptionWindow 
+                        place={placeForSelect || null}
+                        imgUri={require('../../assets/img/rotterdam.jpg')} 
+                        setIsoptionWindow={setIsoptionWindow} 
+                        isoptionWindow={isoptionWindow} 
+                        setIsoptionArea={setIsoptionArea}
+                    />
                 </View>
                 
                 <View style={styles.buttonScroll}>
                     <Carousel
                         layout={"default"}
                         ref={ref => React.createRef()}
-                        data={carouselItems}
+                        data={posts ? posts : null}
                         sliderWidth={400}
                         itemWidth={250}
                         renderItem={_renderItem}
