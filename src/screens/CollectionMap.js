@@ -340,12 +340,23 @@ const CollectionMap = ({navigation}) => {
     /**
      * Work with editor here
      */
-    const handleBodyUpdate = (body) => {
-        // console.log('new Body: ', body, ' for ', activeIndex)
-        setLocation(location.map((o, index) => {
-            if ( index === activeIndex) return {...o, body: body}
-            return o;
-          }))
+    const handleBodyUpdate = async(body, index) => {
+        if(Array.isArray(body)){
+            setLocation(location.map((o, i) => {
+                if ( i in index) {
+                    return {...o, body: body[i]}
+                }
+                return o;
+            }))
+        }
+        else{
+            setLocation(location.map((o, i) => {
+                if ( i === parseInt(index)) {
+                    return {...o, body: body}
+                }
+                return o;
+            }))
+        }
     }
 
     const HandleSaveLeave = () => {
@@ -470,7 +481,9 @@ const CollectionMap = ({navigation}) => {
                     icon='book-open'
                     onPress={() => {
                         navigation.navigate('Editor',{
-                            body: location || null
+                            body: location || null,
+                            readOnly: navigation.state.params.viewOnly ? true : false,
+                            handleBodyUpdate: handleBodyUpdate
                         })
                     }
                     }

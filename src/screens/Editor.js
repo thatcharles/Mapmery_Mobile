@@ -1,5 +1,5 @@
-import React, {useState} from 'react'
-import { View, Text, StyleSheet, SafeAreaView, StatusBar } from 'react-native'
+import React, {useState, useEffect} from 'react'
+import { View, Text, StyleSheet, SafeAreaView, StatusBar,ScrollView } from 'react-native'
 import DeltaStatic, { providerRegistry, Quill } from 'react-native-webview-quill';
 //import {WebView} from 'react-native-webview-quill/src/providers/WebView/ReactNative/index'
 //import { WebView } from 'react-native-webview';
@@ -15,28 +15,59 @@ const Editor = ({navigation}) => {
         startHeaderHeight = 80 + StatusBar.currentHeight
     }
 
-    const onMessageReceived = (msg) => {
+    const [content, setContent] = useState([]) 
+    const [contentAll, setContentAll] = useState([])
+    var dict = {};
+
+    const onMessageReceived = (msg, key) => {
         if(msg.payload){
-            //console.log(msg.payload.text)
+            if (msg.payload.delta){
+                if(msg.payload.delta.ops){
+                    if(msg.payload.delta.ops[2].insert){
+                        bodyUpdate(msg.payload.delta.ops[2].insert, key)
+                    }
+                }
+            }
         }
     }
 
-    const delta = new Delta([
-        { insert: 'The Two Towers' },
-        { insert: '\n', attributes: { header: 1 } },
-        { insert: 'Aragorn sped on up the hill.\n' },
-        { insert: navigation.state.params.body[0].name + '\n' }
-      ]);
-
-    const createDelta = location => {
-        return (
-            new Delta([
-                { insert: location.name },
-                { insert: '\n', attributes: { header: 1 } },
-                { insert: 'Aragorn sped on up the hill.\n' }
-            ])
-        )
+    const bodyUpdate = (body, key) => {
+        dict[key] = body.trim()
     }
+
+    const HandleSave = () => {
+        var body = []
+        var index = []
+        for(var key in dict) {
+            body.push(dict[key])
+            index.push(parseInt(key))
+        }
+        navigation.state.params.handleBodyUpdate(body, index)
+        navigation.goBack()
+    }
+
+    const createContent = locations => {
+        let allContent = []
+        locations.map((location, index) => {
+            let newContent = []
+            newContent.push({ insert: location.name })
+            newContent.push({ insert: '\n', attributes: { header: 1 } })
+            newContent.push({ insert: location.body })
+            newContent.push({ insert: '\n\n\n\n' })
+            setContent(content =>[...content, newContent])
+            allContent.push({ insert: location.name })
+            allContent.push({ insert: '\n', attributes: { header: 1 } })
+            allContent.push({ insert: location.body })
+            allContent.push({ insert: '\n\n\n\n' })
+        })
+        setContentAll(allContent)
+    }
+
+    useEffect(() => {
+        if(navigation.state.params){
+            createContent(navigation.state.params.body)
+        }
+    }, [navigation.state.params])
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
@@ -45,25 +76,61 @@ const Editor = ({navigation}) => {
                     <Text
                         style={{flex: 1, fontSize: 28 ,fontWeight: '700', backgroundColor: 'white'}}
                     >
-                        Editor
+                        {navigation.state.params.readOnly? 'View': 'Editor'}
                     </Text>
-                    <Button 
-                        color='red' 
-                        size={40} 
-                        style={{marginTop: 5}}
-                        onPress={() => navigation.goBack()}
-                    >Cancel</Button>
+                    {!navigation.state.params.readOnly ? (
+                        <View style={{flexDirection:'row'}}>
+                            <Button color='red' size={40} style={{marginTop: 5}}onPress={() => navigation.goBack()}>Cancel</Button>
+                            <Button color='#50a39b' size={40} style={{marginTop: 5}}onPress={() => HandleSave()}>Save</Button>
+                        </View>
+                    ) : (<Button color='#50a39b' size={40} style={{marginTop: 5}}onPress={() => navigation.goBack()}>Back</Button>)
+                    }
                 </View>
             </View>
-            <View style={{ height: 700}}>
-            <WebViewQuillJS
-                backgroundColor={"white"}
-                onMessageReceived={onMessageReceived}
-                content = {delta}
-            />
-            </View>
+            {navigation.state.params.readOnly ? (
+                <View
+                    style={{height: 700}}>
+                    <WebViewQuillJS
+                        backgroundColor={"white"}
+                        content = {
+                            contentAll
+                        }
+                        isReadOnly
+                    />
+                </View>
+                ) :
+                (
+                <ScrollView>
+                    {
+                        navigation.state.params.body.map((location, index) => {
+                            return (
+                                <View
+                                    key={'editor-' + index} 
+                                    style={{height: 200, marginBottom: 10}}>
+                                    <WebViewQuillJS
+                                        backgroundColor={"white"}
+                                        onMessageReceived={msg => onMessageReceived(msg,index)}
+                                        content = {
+                                            content[index]
+                                        }
+                                    />
+                                </View>
+                            )
+                        })
+                    }
+                </ScrollView>
+                )}
         </SafeAreaView>
     )
 }
+
+const styles = StyleSheet.create({
+    fab_addCur: {
+        position: 'absolute',
+        margin: 50,
+        right: 0,
+        backgroundColor: 'white'
+    }
+})
 
 export default Editor

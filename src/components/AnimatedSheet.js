@@ -78,7 +78,7 @@ const AnimatedSheet = (props) => {
                                 <IconButton icon="content-save-edit-outline" 
                                     size={25} 
                                     onPress={() => {
-                                        props.handleBodyUpdate(note)
+                                        props.handleBodyUpdate(note,props.activeIndex)
                                         props.setEditModel(false)
                                     }} 
                                     color='#50a39b'

@@ -76,16 +76,16 @@ const HomeBottomTabNavigator = createBottomTabNavigator(
           }
         }
       },
-      ViewNotes: {
-        screen: ViewNotesNavigator,
-        navigationOptions: {
-          tabBarIcon: ({ focused, tintColor }) => {
-            const iconName = `md-business${focused ? '' : ''}`;
-            tintColor = focused ? '#50a39b' : 'white'
-            return <Ionicons name={iconName} size={iconSize} color={tintColor} />;
-          }
-        }
-      }
+      // ViewNotes: {
+      //   screen: ViewNotesNavigator,
+      //   navigationOptions: {
+      //     tabBarIcon: ({ focused, tintColor }) => {
+      //       const iconName = `md-business${focused ? '' : ''}`;
+      //       tintColor = focused ? '#50a39b' : 'white'
+      //       return <Ionicons name={iconName} size={iconSize} color={tintColor} />;
+      //     }
+      //   }
+      // }
   },
   {
       initialRouteName: 'Home',

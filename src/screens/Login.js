@@ -88,7 +88,7 @@ export default function Login({ navigation }) {
 
   // load image into cache before loading the page
   const _loadAssetsAsync = async() => {
-    const imageAssets = cacheImages([require('../../assets/img/rotterdam.jpg')]);
+    const imageAssets = cacheImages([require('../../assets/img/carmelByTheSea.jpg')]);
 
     await Promise.all([...imageAssets])
     await setIsReady(true)
@@ -231,13 +231,13 @@ export default function Login({ navigation }) {
             transform: [{ translateY: bgY }]
           }}
         >
-          <Svg height={height + 50} width={width}>
+          <Svg height={height + 50} width={width+5}>
             <ClipPath id='clip'>
               <Circle r={height + 50} cx={width / 2}/>
             </ClipPath>
             <Image
-              href={require('../../assets/img/rotterdam.jpg')}
-              width={width}
+              href={require('../../assets/img/carmelByTheSea.jpg')}
+              width={width+5}
               height={height + 50}
               preserveAspectRatio= 'xMidYMid slice' // preserveAspectRatio set image to fill the screen
               clipPath='url(#clip)'

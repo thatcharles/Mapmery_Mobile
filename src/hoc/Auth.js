@@ -4,6 +4,9 @@ import React, { useEffect } from 'react';
 import { auth } from '../redux/notesApp'
 import { useSelector, useDispatch } from "react-redux";
 import { StyleSheet, View, Text, Dimensions, TouchableWithoutFeedback, TextInput, Button, TouchableOpacity } from 'react-native'
+import Svg, {Image, Circle, ClipPath} from 'react-native-svg';
+
+const {width,height} = Dimensions.get('window')
 
 export default function Auth({ navigation }, props) {
 
@@ -34,7 +37,23 @@ export default function Auth({ navigation }, props) {
         
     }, [navigation.state.params])
 
-    return (<Text>loading...</Text>)
+    return (
+        <View style={{flex:1, justifyContent: 'center', alignItems: 'center', backgroundColor:'#50a39b'}}>
+            <Image
+                style={{flex:1, width: null, height: null, resizeMode: 'cover', borderRadius: 5, maxHeight: 100}}
+                href={require('../../assets/logo/Mapmory_Logo.png')}
+            />
+            <Svg height={350} width={350}>
+                <Image
+                href={require('../../assets/logo/Mapmory_Logo.png')}
+                width={350}
+                height={350}
+                preserveAspectRatio= 'xMidYMid slice' // preserveAspectRatio set image to fill the screen
+                clipPath='url(#clip)'
+                />
+            </Svg>
+        </View>
+    )
 }
 
 /*

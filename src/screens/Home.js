@@ -27,8 +27,9 @@ const Home = ({ navigation }) => {
     const [isAuth, setIsAuth] = useState(false)
     const [posts, setPosts] = useState(false)
     const [postsUpdate, setPostsUpdate] = useState(null)
+    const [scrollY, setScrollY] = useState(new Value(0))
 
-    const scrollY = new Value(0)
+    //const scrollY = new Value(0)
     let startHeaderHeight = 80
     let endHeaderHeight = 50
 
@@ -133,16 +134,15 @@ const Home = ({ navigation }) => {
                 <Animated.ScrollView
                     scrollEventThrottle={16}
                     style={{flex:1, backgroundColor: 'white'}}
-                    onScroll={
-                            event(
-                                [
-                                    {
-                                        // when we scroll, put y offset into scrollY variable
-                                        nativeEvent:{contentOffset:{y:scrollY}}
-                                    }
-                                ]
-                            )
-                        }
+                    onScroll={event(
+                                    [
+                                        {
+                                            // when we scroll, put y offset into scrollY variable
+                                            nativeEvent:{contentOffset:{y:scrollY}}
+                                        }
+                                    ]
+                                )
+                    }
                 >
                     {/* <View style={{flex:1, backgroundColor: 'white', paddingTop: 20}}>
                         <Text style={{fontSize: 24, fontWeight: '700', paddingHorizontal: 20}}> Home </Text>
