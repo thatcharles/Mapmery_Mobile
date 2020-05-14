@@ -28,7 +28,7 @@ const GooglePlacesInput = ({navigation}) => {
  
       query={{
         // available options: https://developers.google.com/places/web-service/autocomplete
-        key: 'AIzaSyD-9UDS1WHVVTiZjXjGxIUJZBGeaHTB7aI',
+        key: 'AIzaSyDIjMKzEHKg7QBKcgiQv5QVeTCIuIHLLd0',
         language: 'en', // language of the results
         types: 'establishment' // default: 'geocode'
       }}

@@ -24,7 +24,12 @@
       "supportsTablet": true
     },
     "android": {
-      "package": "com.mapmory.mapmory"
+      "package": "com.mapmory.mapmory",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyDIjMKzEHKg7QBKcgiQv5QVeTCIuIHLLd0"
+        }
+      }
     },
     "description": "Download the expo app to try Mapmory"
   }

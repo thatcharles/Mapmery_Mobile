@@ -156,12 +156,14 @@ const HomeMap = ({navigation}) => {
         
         if (hasStartAndEnd) {
             desLatitude.map((l, idx) => {
-                var concatStart = `${latitude},${longitude}`
-                var concatEnd = `${l},${desLongitude[idx]}`
-                if (idx != 0){
-                    concatStart = `${desLatitude[idx-1]},${desLongitude[idx-1]}`
-                }
-                getDirections(concatStart, concatEnd)
+                setTimeout(() => {
+                    var concatStart = `${latitude},${longitude}`
+                    var concatEnd = `${l},${desLongitude[idx]}`
+                    if (idx != 0){
+                        concatStart = `${desLatitude[idx-1]},${desLongitude[idx-1]}`
+                    }
+                    getDirections(concatStart, concatEnd)
+                }, 100);
             })
         }
       }
@@ -173,8 +175,12 @@ const HomeMap = ({navigation}) => {
             /**
              * ToDo: use waypoint?
              */
-            const resp = await fetch(`https://maps.googleapis.com/maps/api/directions/json?origin=${startLoc}&destination=${desLoc}&mode=walking&key=AIzaSyD-9UDS1WHVVTiZjXjGxIUJZBGeaHTB7aI`)
+            
+            const resp = await fetch(`https://maps.googleapis.com/maps/api/directions/json?origin=${startLoc}&destination=${desLoc}&mode=walking&key=AIzaSyDIjMKzEHKg7QBKcgiQv5QVeTCIuIHLLd0`)
             const respJson = await resp.json();
+            // if (respJson.error_message){
+            //     console.log(respJson.error_message)
+            // }
             const response = respJson.routes[0]
             const distanceTime = response.legs[0]
             const distance = distanceTime.distance.text
@@ -189,6 +195,7 @@ const HomeMap = ({navigation}) => {
             setNavigateCoords(prevState => [...prevState, newCoords]);
             //setDistance(distance)
             //setTime(time)
+
         } catch(error) {
             console.log('Error: ', error)
         }
